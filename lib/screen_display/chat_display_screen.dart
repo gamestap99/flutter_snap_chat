@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_snap_chat/chat.dart';
 import 'package:flutter_snap_chat/const.dart';
 import 'package:flutter_snap_chat/items/chat_item.dart';
+import 'package:flutter_snap_chat/router.dart';
 import 'package:flutter_snap_chat/widget/bottom_navigate.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -30,6 +31,12 @@ class _ChatDisplayScreenState extends State<ChatDisplayScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Chat"),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.edit),
+            onPressed: () =>Navigator.of(context).pushNamed(AppRoutes.addGroupDisplay),
+          ),
+        ],
       ),
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance.collection('rooms').where('member', arrayContainsAny: [args["userId"]]).snapshots(),
@@ -77,7 +84,6 @@ class _ChatDisplayScreenState extends State<ChatDisplayScreen> {
         if (snapshot.data()['type'] == true) {
           FirebaseFirestore.instance.collection('users').doc(snapshot.data()['member'][0]).get().then((snapshotUser) {
             if (snapshotUser.exists) {
-              print('fsdfsdfsdfsdfsd');
               return Container(
                 child: FlatButton(
                   child: Row(
@@ -141,7 +147,7 @@ class _ChatDisplayScreenState extends State<ChatDisplayScreen> {
                             builder: (context) => Chat(
                                   peerId: snapshot.data()['member'][0],
                                   peerAvatar: snapshotUser.data()['photoUrl'],
-                              roomID: roomID,
+                                  roomID: roomID,
                                 )));
                   },
                   color: greyColor2,
