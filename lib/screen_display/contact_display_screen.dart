@@ -140,7 +140,9 @@ class _ContactDisplayScreenState extends State<ContactDisplayScreen> {
                 MaterialPageRoute(
                     builder: (context) => ProfileScreen(
                           id: id,
-                          peerId: document.id, peerAvatar: document.data()['photoUrl'],
+                          peerId: document.id,
+                          peerAvatar: document.data()['photoUrl'],
+                          peerName: document.data()['nickname'],
                         )));
           },
           color: greyColor2,
