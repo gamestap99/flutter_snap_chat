@@ -20,7 +20,6 @@ class AppRoutes {
   static const contactDisplay = "/contact_display";
   static const addGroupDisplay = "/group_display";
   static const space = "/space";
-  static const timelapseProject = "/timelapse_project";
   static const timelapseProjectInfo = "/timelapse_project_info";
 
   static dynamic getRoutes(RouteSettings settings) {

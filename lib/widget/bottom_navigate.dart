@@ -1,6 +1,6 @@
-
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 class NavObject {
   String route;
   Icon navIcon;
@@ -17,18 +17,20 @@ class BottomNavigate extends StatefulWidget {
 class _BottomNavigateState extends State<BottomNavigate> {
   int _selectedIndex = 0;
   SharedPreferences _prefs;
+
   @override
-  Future<void> initState()  {
+  Future<void> initState() {
     // TODO: implement initState
     super.initState();
     getUser();
   }
+
   Future<void> getUser() async {
-     _prefs = await SharedPreferences.getInstance();
+    _prefs = await SharedPreferences.getInstance();
   }
+
   @override
   Widget build(BuildContext context) {
-
     List<NavObject> navs = [
       NavObject(
         route: "/chat_display",
@@ -52,15 +54,16 @@ class _BottomNavigateState extends State<BottomNavigate> {
     });
     _selectedIndex = navs.asMap().containsKey(curIndex) ? curIndex : 0;
 
-
     void _onItemTapped(int index) {
       setState(() {
         _selectedIndex = index;
 
-        Navigator.of(context).popAndPushNamed(navs[index].route,arguments: {"userId": _prefs.get('id')});
+        Navigator.of(context).popAndPushNamed(navs[index].route, arguments: {
+          "userId": _prefs.get('id'),
+          "userImage":_prefs.get('photoUrl'),
+        });
       });
     }
-
 
     navs.asMap().forEach((index, element) {
       items.add(BottomNavigationBarItem(
@@ -74,7 +77,6 @@ class _BottomNavigateState extends State<BottomNavigate> {
 //      iconSize: Responsive().setImageSize(3),
       type: BottomNavigationBarType.fixed,
       onTap: _onItemTapped,
-
     );
   }
 }

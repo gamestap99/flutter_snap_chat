@@ -1,10 +1,12 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_snap_chat/chat.dart';
 import 'package:flutter_snap_chat/const.dart';
 import 'package:flutter_snap_chat/items/chat_item.dart';
 import 'package:flutter_snap_chat/router.dart';
+import 'package:flutter_snap_chat/screen_display/add_search_name_chat.dart';
 import 'package:flutter_snap_chat/widget/bottom_navigate.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -16,7 +18,7 @@ class ChatDisplayScreen extends StatefulWidget {
 class _ChatDisplayScreenState extends State<ChatDisplayScreen> {
   String id;
   SharedPreferences preferences;
-
+  List<DocumentSnapshot> documents=[];
   @override
   void initState() {
     // TODO: implement initState
@@ -31,10 +33,37 @@ class _ChatDisplayScreenState extends State<ChatDisplayScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Chat"),
+        leading:  Material(
+          child: args["userImage"] != null
+              ? CachedNetworkImage(
+            placeholder: (context, url) => Container(
+              child: CircularProgressIndicator(
+                strokeWidth: 1.0,
+                valueColor: AlwaysStoppedAnimation<Color>(themeColor),
+              ),
+              width: 50.0,
+              height: 50.0,
+              padding: EdgeInsets.all(15.0),
+            ),
+            imageUrl: args["userImage"],
+            width: 50.0,
+            height: 50.0,
+            fit: BoxFit.cover,
+          )
+              : Icon(
+            Icons.account_circle,
+            size: 50.0,
+            color: greyColor,
+          ),
+          borderRadius: BorderRadius.all(Radius.circular(25.0)),
+          clipBehavior: Clip.hardEdge,
+        ),
         actions: [
           IconButton(
             icon: Icon(Icons.edit),
-            onPressed: () =>Navigator.of(context).pushNamed(AppRoutes.addGroupDisplay),
+            onPressed: () =>Navigator.of(context).push(CupertinoPageRoute(builder: (_){
+              return AddSearchNameChat( id: args["userId"]);
+            })),
           ),
         ],
       ),
@@ -48,9 +77,18 @@ class _ChatDisplayScreenState extends State<ChatDisplayScreen> {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Text("Loading");
           }
+          if(snapshot.connectionState == ConnectionState.done){
+            setState(() {
+              print("fgsfsdafsdf");
+              documents = snapshot.data.docs;
+            });
+          }
           return snapshot.hasData
               ? ListView(
                   children: snapshot.data.docs.map((DocumentSnapshot document) {
+                    // setState(() {
+                    //   documents.add(document);
+                    // });
                     return ChatItem(
                       roomID: document.id,
                       lastMessage: document.data()['last_message'],
