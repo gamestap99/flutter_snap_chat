@@ -3,10 +3,12 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_snap_chat/const.dart';
+import 'package:flutter_snap_chat/items/add_group_friend.dart';
 
 class AddGroupItem extends StatefulWidget {
   final List<DocumentSnapshot> lstDocuments;
   final String id;
+
 
   const AddGroupItem({Key key,@required this.lstDocuments,@required this.id}) : super(key: key);
   @override
@@ -50,46 +52,7 @@ class _AddGroupItemState extends State<AddGroupItem> {
   }
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(20,10,20,30),
-      child: Column(
-        children: [
-          TextFormField(
-            decoration: InputDecoration(
-                filled: true,
-                fillColor: Colors.black12,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(30)),
-                ),
-                hintText: "Tìm kiếm",
-                prefixIcon: Icon(Icons.search)
-            ),
-          ),
-          Container(
-            child: Column(
-              children: [
-                Text("Bạn bè"),
-                ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: idFriend.length,
-                    itemBuilder: (context, index) {
-                      return FutureBuilder(
-                          future: FirebaseFirestore.instance.collection("users").doc(idFriend[index]).get(),
-                          builder: (context, snapshot) {
-                            if (snapshot.hasError) {
-                              return Text("Something went wrong");
-                            }
-                            if (snapshot.connectionState == ConnectionState.done) {
-                              return itemFriend(snapshot.data,index);
-                            }
-                            return Text("loading");
-                          });
-                    }),
-              ],
-            ),),
-        ],
-      ),
-    );
+    return AddGroupFriend(idFriend: idFriend, lstSelect: lstSelect);
   }
   Widget itemFriend(DocumentSnapshot document,int index) {
     return InkWell(

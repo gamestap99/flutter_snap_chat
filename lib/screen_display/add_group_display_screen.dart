@@ -10,7 +10,7 @@ class AddGroupDisplayScreen extends StatefulWidget {
 
 class _AddGroupDisplayScreenState extends State<AddGroupDisplayScreen> {
   String id;
-
+  int count;
   @override
   void initState() {
     // TODO: implement initState
@@ -24,13 +24,17 @@ class _AddGroupDisplayScreenState extends State<AddGroupDisplayScreen> {
       id = prefs.getString('id') ?? '';
     });
   }
-
+  void setCount(int count){
+    setState(() {
+      count =count;
+    });
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Thêm thành viên"),
-      ),
+      // appBar: AppBar(
+      //   title: Text("Thêm thành viên"),
+      // ),
       body: StreamBuilder(
           stream: FirebaseFirestore.instance.collection("friends").snapshots(),
           builder: (context, snapshot) {
