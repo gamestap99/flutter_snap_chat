@@ -2,9 +2,11 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_snap_chat/chat.dart';
 import 'package:flutter_snap_chat/const.dart';
 import 'package:flutter_snap_chat/items/chat_item.dart';
+import 'package:flutter_snap_chat/repositories/user_repository/user_repository.dart';
 import 'package:flutter_snap_chat/router.dart';
 import 'package:flutter_snap_chat/screen_display/add_search_name_chat.dart';
 import 'package:flutter_snap_chat/widget/bottom_navigate.dart';
@@ -29,6 +31,8 @@ class _ChatDisplayScreenState extends State<ChatDisplayScreen> {
   Widget build(BuildContext context) {
     Map<String, dynamic> args = ModalRoute.of(context).settings.arguments;
     print(args["userId"].toString());
+    print("*******************************************************");
+    print(RepositoryProvider.of<AuthenticationRepository>(context).getUser().name);
     bool isLoading;
     return Scaffold(
       appBar: AppBar(

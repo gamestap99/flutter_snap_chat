@@ -2,6 +2,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_snap_chat/containers/init_container.dart';
 import 'package:flutter_snap_chat/home.dart';
 import 'package:flutter_snap_chat/login.dart';
 import 'package:flutter_snap_chat/screen_display/add_group_display_screen.dart';
@@ -15,6 +16,7 @@ class AppRoutes {
   static const login = "/login";
   static const settings = "/settings";
   static const more = "/more";
+  static const init = "/init";
   static const chatDisplay = "/chat_display";
   static const friendDisplay = "/friend_display";
   static const contactDisplay = "/contact_display";
@@ -40,6 +42,8 @@ class AppRoutes {
         return CupertinoPageRoute(builder:(_)=>ChatSettings(), settings: settings);
       case AppRoutes.space:
         return CupertinoPageRoute(builder:(_)=>LoginScreen(), settings: settings);
+      case AppRoutes.init:
+        return CupertinoPageRoute(builder:(_)=>InitContainer(), settings: settings);
       default:
         return CupertinoPageRoute(builder:(_)=>LoginScreen(), settings: settings);
     }
