@@ -1,8 +1,14 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_snap_chat/items/friend_item.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_snap_chat/blocs/authentication_bloc/bloc.dart';
+import 'package:flutter_snap_chat/blocs/friend_bloc/bloc.dart';
+import 'package:flutter_snap_chat/const.dart';
+import 'package:flutter_snap_chat/containers/process_friend_container.dart';
 import 'package:flutter_snap_chat/widget/bottom_navigate.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class FriendDisplayScreen extends StatefulWidget {
   @override
@@ -10,42 +16,154 @@ class FriendDisplayScreen extends StatefulWidget {
 }
 
 class _FriendDisplayScreenState extends State<FriendDisplayScreen> {
-  String id;
-
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    readIdLocal();
-  }
-
-  Future<void> readIdLocal() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      id = prefs.getString('id') ?? '';
-    });
   }
 
   @override
   Widget build(BuildContext context) {
+    String uid = context.select((AuthenticationBloc bloc) => bloc.state.user.id.toString());
     return Scaffold(
       appBar: AppBar(
-        title: Text("aaaa"),
+        title: Text("Bạn bè"),
       ),
-      body: StreamBuilder(
-          stream: FirebaseFirestore.instance.collection("friends").snapshots(),
-          builder: (context, snapshot) {
-            if (snapshot.hasError) {
-              return Text('Something went wrong');
-            }
+      body: BlocConsumer<FriendBloc, FriendState>(
+          builder: (context, state) {
+            if (state is FriendLoading) {
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+            } else if (state is FriendLoaed) {
+              return Column(
+                children: [
+                  InkWell(
+                    onTap: () {
+                      Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
+                        return ProcessFriendContainer();
+                      }));
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            children: [
+                              FaIcon(FontAwesomeIcons.userPlus),
+                              SizedBox(width: 5,),
+                              Text("Lời mời kết bạn",style: TextStyle(fontSize: 15,fontWeight: FontWeight.w700),),
+                            ],
+                          ),
+                          Text(
+                            state.countAcpect,
+                            style: TextStyle(color: Colors.red, fontSize: 17),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  Divider(
+                    height: 10,
+                    thickness: 1,
+                  ),
+                  ListView.builder(
+                      itemCount: state.friends.length,
+                      shrinkWrap: true,
+                      itemBuilder: (context, index) {
+                        return StreamBuilder<DocumentSnapshot>(
+                            stream: FirebaseFirestore.instance.collection('users').doc(state.friends[index]).snapshots(),
+                            builder: (context, snapshot) {
+                              if (snapshot.hasError) {
+                                return Text('Something went wrong');
+                              }
 
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return Text("Loading");
+                              if (snapshot.connectionState == ConnectionState.waiting) {
+                                return Text("Loading");
+                              }
+                              return buildItem(context, snapshot.data, uid);
+                            });
+                      }),
+                ],
+              );
             }
-            return FriendItem(lstDocuments: snapshot.data.documents,id: id,);
-
-          }),
+            return Container();
+          },
+          listener: (context, state) {}),
       bottomNavigationBar: BottomNavigate(),
     );
+  }
+
+  Widget buildItem(BuildContext context, DocumentSnapshot snapshot, String uid) {
+    if (snapshot.id == uid) {
+      return Container();
+    } else {
+      return Container(
+        child: FlatButton(
+          child: Row(
+            children: <Widget>[
+              Material(
+                child: snapshot.data()['photoUrl'] != null
+                    ? CachedNetworkImage(
+                        placeholder: (context, url) => Container(
+                          child: CircularProgressIndicator(
+                            strokeWidth: 1.0,
+                            valueColor: AlwaysStoppedAnimation<Color>(themeColor),
+                          ),
+                          width: 50.0,
+                          height: 50.0,
+                          padding: EdgeInsets.all(15.0),
+                        ),
+                        imageUrl: snapshot.data()['photoUrl'],
+                        width: 50.0,
+                        height: 50.0,
+                        fit: BoxFit.cover,
+                      )
+                    : Icon(
+                        Icons.account_circle,
+                        size: 50.0,
+                        color: greyColor,
+                      ),
+                borderRadius: BorderRadius.all(Radius.circular(25.0)),
+                clipBehavior: Clip.hardEdge,
+              ),
+              Flexible(
+                child: Container(
+                  child: Column(
+                    children: <Widget>[
+                      Container(
+                        child: Text(
+                          snapshot.data()['nickname'],
+                          style: TextStyle(color: primaryColor),
+                        ),
+                        alignment: Alignment.centerLeft,
+                        margin: EdgeInsets.fromLTRB(10.0, 0.0, 0.0, 5.0),
+                      ),
+                    ],
+                  ),
+                  margin: EdgeInsets.only(left: 20.0),
+                ),
+              ),
+            ],
+          ),
+          onPressed: () {
+            // Navigator.push(
+            //     context,
+            //     MaterialPageRoute(
+            //         builder: (context) => ProfileScreen(
+            //           id: id,
+            //           peerId: userModel.id,
+            //           peerAvatar: userModel.photo,
+            //           peerName: userModel.name,
+            //         )));
+          },
+          color: greyColor2,
+          padding: EdgeInsets.fromLTRB(25.0, 10.0, 25.0, 10.0),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+        ),
+        margin: EdgeInsets.only(bottom: 10.0, left: 5.0, right: 5.0),
+      );
+    }
   }
 }

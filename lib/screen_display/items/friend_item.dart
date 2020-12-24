@@ -28,8 +28,6 @@ class _FriendItemState extends State<FriendItem> {
     widget.lstDocuments.forEach((element) {
       List<String> strings = element.id.split("-");
       if (strings[0] == widget.id || strings[1] == widget.id) {
-        print(element.data()[widget.id]);
-        print(element.data()[widget.id]);
         if (element.data()[widget.id] == 'accept_request') {
           if (strings[0] == widget.id) {
             idRequest.add(strings[1]);

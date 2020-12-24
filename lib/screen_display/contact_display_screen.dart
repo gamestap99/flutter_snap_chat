@@ -1,10 +1,12 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_snap_chat/blocs/authentication_bloc/bloc.dart';
+import 'package:flutter_snap_chat/blocs/contact_bloc/bloc.dart';
 import 'package:flutter_snap_chat/const.dart';
-import 'package:flutter_snap_chat/screen_display/profile_screen.dart';
+import 'package:flutter_snap_chat/containers/profile_container.dart';
+import 'package:flutter_snap_chat/models/user_model.dart';
 import 'package:flutter_snap_chat/widget/bottom_navigate.dart';
-import 'package:flutter_snap_chat/widget/loading.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ContactDisplayScreen extends StatefulWidget {
@@ -13,69 +15,56 @@ class ContactDisplayScreen extends StatefulWidget {
 }
 
 class _ContactDisplayScreenState extends State<ContactDisplayScreen> {
-  String _currentUserId;
   bool isLoading = false;
   SharedPreferences prefs;
-  String id;
-
-  Future<void> readId() async {
-    prefs = await SharedPreferences.getInstance();
-    setState(() {
-      id = prefs.getString('id') ?? '';
-    });
-  }
+  ContactCubit _contactCubit;
+  FocusNode focusNode;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    readId();
+    _contactCubit = BlocProvider.of<ContactCubit>(context);
+    focusNode = FocusNode();
   }
 
   @override
   Widget build(BuildContext context) {
+    String _uid = context.select((AuthenticationBloc bloc) => bloc.state.user.id.toString());
     return Scaffold(
       appBar: AppBar(
-        title: Text("Kết nối"),
-      ),
-      body: Center(
-        child: Stack(
-          children: <Widget>[
-            // List
-            Container(
-              child: StreamBuilder(
-                stream: FirebaseFirestore.instance.collection('users').snapshots(),
-                builder: (context, snapshot) {
-                  if (!snapshot.hasData) {
-                    return Center(
-                      child: CircularProgressIndicator(
-                        valueColor: AlwaysStoppedAnimation<Color>(themeColor),
-                      ),
-                    );
-                  } else {
-                    return ListView.builder(
-                      padding: EdgeInsets.all(10.0),
-                      itemBuilder: (context, index) => buildItem(context, snapshot.data.documents[index]),
-                      itemCount: snapshot.data.documents.length,
-                    );
-                  }
-                },
-              ),
-            ),
-
-            // Loading
-            Positioned(
-              child: isLoading ? const Loading() : Container(),
-            )
-          ],
+        leading: InkWell(
+          onTap: (){
+            focusNode.requestFocus();},
+          child: Icon(Icons.search),
         ),
+        title: _InputSearchName(
+          focusNode: focusNode,
+        ),
+      ),
+      body: BlocConsumer<ContactCubit, ContactState>(
+        builder: (context, state) {
+          if (state is ContactLoading) {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          } else if (state is ContactLoaded) {
+            return ListView.builder(
+                itemCount: state.users.length,
+                itemBuilder: (_, index) {
+                  return buildItem(context, state.users[index], _uid);
+                });
+          }
+          return Container();
+        },
+        listener: (context, state) {},
       ),
       bottomNavigationBar: BottomNavigate(),
     );
   }
 
-  Widget buildItem(BuildContext context, DocumentSnapshot document) {
-    if (document.data()['id'] == _currentUserId) {
+  Widget buildItem(BuildContext context, UserModel userModel, String uid) {
+    if (userModel.id == uid) {
       return Container();
     } else {
       return Container(
@@ -83,7 +72,7 @@ class _ContactDisplayScreenState extends State<ContactDisplayScreen> {
           child: Row(
             children: <Widget>[
               Material(
-                child: document.data()['photoUrl'] != null
+                child: userModel.photo != null
                     ? CachedNetworkImage(
                         placeholder: (context, url) => Container(
                           child: CircularProgressIndicator(
@@ -94,7 +83,7 @@ class _ContactDisplayScreenState extends State<ContactDisplayScreen> {
                           height: 50.0,
                           padding: EdgeInsets.all(15.0),
                         ),
-                        imageUrl: document.data()['photoUrl'],
+                        imageUrl: userModel.photo,
                         width: 50.0,
                         height: 50.0,
                         fit: BoxFit.cover,
@@ -113,20 +102,12 @@ class _ContactDisplayScreenState extends State<ContactDisplayScreen> {
                     children: <Widget>[
                       Container(
                         child: Text(
-                          'Tên: ${document.data()['nickname']}',
+                          userModel.name,
                           style: TextStyle(color: primaryColor),
                         ),
                         alignment: Alignment.centerLeft,
                         margin: EdgeInsets.fromLTRB(10.0, 0.0, 0.0, 5.0),
                       ),
-                      Container(
-                        child: Text(
-                          'Giới thiệu: ${document.data()['aboutMe'] ?? 'Chưa có'}',
-                          style: TextStyle(color: primaryColor),
-                        ),
-                        alignment: Alignment.centerLeft,
-                        margin: EdgeInsets.fromLTRB(10.0, 0.0, 0.0, 0.0),
-                      )
                     ],
                   ),
                   margin: EdgeInsets.only(left: 20.0),
@@ -138,11 +119,9 @@ class _ContactDisplayScreenState extends State<ContactDisplayScreen> {
             Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => ProfileScreen(
-                          id: id,
-                          peerId: document.id,
-                          peerAvatar: document.data()['photoUrl'],
-                          peerName: document.data()['nickname'],
+                    builder: (context) => ProfileContainer(
+                          uid: uid,
+                          peerUser: userModel,
                         )));
           },
           color: greyColor2,
@@ -153,4 +132,43 @@ class _ContactDisplayScreenState extends State<ContactDisplayScreen> {
       );
     }
   }
+}
+
+class _InputSearchName extends StatelessWidget {
+  final FocusNode focusNode;
+
+  const _InputSearchName({Key key, this.focusNode}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocConsumer<ContactCubit, ContactState>(
+        builder: (context, state) {
+          return TextField(
+            focusNode: focusNode,
+            keyboardType: TextInputType.text,
+            autofocus: false,
+            cursorColor: Colors.white,
+            style: TextStyle(
+              color: Colors.white,
+            ),
+            onChanged: (value) {
+              BlocProvider.of<ContactCubit>(context).searchName(value);
+            },
+            decoration: InputDecoration(
+              hintText: "Nhập tên bạn bè của bạn",
+              hintStyle: TextStyle(color: Colors.white, fontSize: 13),
+              isDense: true,
+              enabledBorder: InputBorder.none,
+              focusedBorder: UnderlineInputBorder(),
+              // border: OutlineInputBorder(
+              //   borderRadius:
+              //   BorderRadius.circular(50.0),
+              //   borderSide: BorderSide.none,
+              // )
+            ),
+          );
+        },
+        listener: (context, state) {});
+  }
+
 }
