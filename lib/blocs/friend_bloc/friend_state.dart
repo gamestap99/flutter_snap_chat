@@ -14,7 +14,7 @@ class FriendLoading extends FriendState{
 class FriendLoaed extends FriendState{
   final List<String> friends;
   final String countAcpect;
-  FriendLoaed(this.friends,this.countAcpect);
+  FriendLoaed(this.friends,{this.countAcpect});
   @override
   // TODO: implement props
   List<Object> get props => [friends,countAcpect];

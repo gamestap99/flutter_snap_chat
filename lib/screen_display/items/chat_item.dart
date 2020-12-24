@@ -130,7 +130,7 @@ class _ChatItemState extends State<ChatItem> {
                               member: widget.member,
                               peerAvatar: peerAvatar,
                               peerId: perId,
-                              perToken: user["pushToken"],
+                              perToken: user["pushToken"], peerName: user['nickname'],
                             )));
               },
               color: greyColor2,

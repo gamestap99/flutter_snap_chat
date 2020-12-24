@@ -12,13 +12,26 @@ class ChatContainer extends StatelessWidget {
   final String peerId;
   final String peerAvatar;
   final String perToken;
-  const ChatContainer({Key key,@required this.perToken,@required this.member,@required this.roomId,@required this.peerId,@required this.peerAvatar}) : super(key: key);
+  final String peerName;
+
+  const ChatContainer({Key key, @required this.perToken, @required this.member, @required this.roomId, @required this.peerId, @required this.peerAvatar,@required this.peerName}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     String uid = context.select((AuthenticationBloc bloc) => bloc.state.user.id.toString());
     return BlocProvider(
-      create: (_) => ChatCubit(repository: ApiChatRepository(), roomId: null, friendRepository: ApiFriendRepository())..getUser(member, uid),
-      child: Chat(peerId: peerId, peerAvatar: peerAvatar, roomID: roomId,members:member, perToken: perToken,),
+      create: (_) =>
+      ChatCubit(repository: ApiChatRepository(), roomId: null, friendRepository: ApiFriendRepository())
+        ..getUser(member, uid),
+      child: Chat(
+        peerId: peerId,
+        peerAvatar: peerAvatar,
+        roomID: roomId,
+        members: member,
+        perToken: perToken,
+        name
+        :peerName,
+      ),
     );
   }
 }

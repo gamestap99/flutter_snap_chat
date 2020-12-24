@@ -181,7 +181,6 @@ class _RoomDisplayScreenState extends State<RoomDisplayScreen> {
           }
         },
       ),
-      bottomNavigationBar: BottomNavigate(),
     );
   }
 }

@@ -4,6 +4,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_snap_chat/blocs/authentication_bloc/bloc.dart';
+import 'package:flutter_snap_chat/blocs/count_request_friend_bloc/count_request_friend_bloc.dart';
+import 'package:flutter_snap_chat/blocs/count_request_friend_bloc/count_request_friend_state.dart';
 import 'package:flutter_snap_chat/blocs/friend_bloc/bloc.dart';
 import 'package:flutter_snap_chat/const.dart';
 import 'package:flutter_snap_chat/containers/process_friend_container.dart';
@@ -29,69 +31,72 @@ class _FriendDisplayScreenState extends State<FriendDisplayScreen> {
       appBar: AppBar(
         title: Text("Bạn bè"),
       ),
-      body: BlocConsumer<FriendBloc, FriendState>(
-          builder: (context, state) {
-            if (state is FriendLoading) {
-              return Center(
-                child: CircularProgressIndicator(),
-              );
-            } else if (state is FriendLoaed) {
-              return Column(
+      body: Column(
+        children: [
+          InkWell(
+            onTap: () {
+              Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
+                return ProcessFriendContainer();
+              }));
+            },
+            child: Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  InkWell(
-                    onTap: () {
-                      Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
-                        return ProcessFriendContainer();
-                      }));
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.all(10.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Row(
-                            children: [
-                              FaIcon(FontAwesomeIcons.userPlus),
-                              SizedBox(width: 5,),
-                              Text("Lời mời kết bạn",style: TextStyle(fontSize: 15,fontWeight: FontWeight.w700),),
-                            ],
-                          ),
-                          Text(
-                            state.countAcpect,
-                            style: TextStyle(color: Colors.red, fontSize: 17),
-                          ),
-                        ],
-                      ),
-                    ),
+                  Row(
+                    children: [
+                      FaIcon(FontAwesomeIcons.userPlus),
+                      SizedBox(width: 5,),
+                      Text("Lời mời kết bạn",style: TextStyle(fontSize: 15,fontWeight: FontWeight.w700),),
+                    ],
                   ),
-                  Divider(
-                    height: 10,
-                    thickness: 1,
+                  Text(
+                    context.watch<CountRequestFriendBloc>().state.count.toString(),
+                    style: TextStyle(color: Colors.red, fontSize: 17),
                   ),
-                  ListView.builder(
-                      itemCount: state.friends.length,
-                      shrinkWrap: true,
-                      itemBuilder: (context, index) {
-                        return StreamBuilder<DocumentSnapshot>(
-                            stream: FirebaseFirestore.instance.collection('users').doc(state.friends[index]).snapshots(),
-                            builder: (context, snapshot) {
-                              if (snapshot.hasError) {
-                                return Text('Something went wrong');
-                              }
-
-                              if (snapshot.connectionState == ConnectionState.waiting) {
-                                return Text("Loading");
-                              }
-                              return buildItem(context, snapshot.data, uid);
-                            });
-                      }),
                 ],
-              );
-            }
-            return Container();
-          },
-          listener: (context, state) {}),
-      bottomNavigationBar: BottomNavigate(),
+              ),
+            ),
+          ),
+          Divider(
+            height: 10,
+            thickness: 1,
+          ),
+          BlocConsumer<FriendBloc, FriendState>(
+              builder: (context, state) {
+                if (state is FriendLoading) {
+                  return Center(
+                    child: CircularProgressIndicator(),
+                  );
+                } else if (state is FriendLoaed) {
+                  return Column(
+                    children: [
+                      ListView.builder(
+                          itemCount: state.friends.length,
+                          shrinkWrap: true,
+                          itemBuilder: (context, index) {
+                            return StreamBuilder<DocumentSnapshot>(
+                                stream: FirebaseFirestore.instance.collection('users').doc(state.friends[index]).snapshots(),
+                                builder: (context, snapshot) {
+                                  if (snapshot.hasError) {
+                                    return Text('Something went wrong');
+                                  }
+
+                                  if (snapshot.connectionState == ConnectionState.waiting) {
+                                    return Text("Loading");
+                                  }
+                                  return buildItem(context, snapshot.data, uid);
+                                });
+                          }),
+                    ],
+                  );
+                }
+                return Container(child: Center(child: Text('Chưa có bạn bè'),),);
+              },
+              listener: (context, state) {}),
+        ],
+      ),
     );
   }
 

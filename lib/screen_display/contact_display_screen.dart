@@ -59,7 +59,6 @@ class _ContactDisplayScreenState extends State<ContactDisplayScreen> {
         },
         listener: (context, state) {},
       ),
-      bottomNavigationBar: BottomNavigate(),
     );
   }
 

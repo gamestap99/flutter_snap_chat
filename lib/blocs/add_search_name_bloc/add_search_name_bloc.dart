@@ -33,12 +33,13 @@ class AddSearchNameBloc extends Bloc<AddSearchNameEvent, AddSearchNameState> {
 
   Stream<AddSearchNameState> _mapGetFriend(AddSeachNameGetData event) async*{
     try{
-     if(event.contacts.length > 0 ){
+
        final data = _friendRepository.getIdFriends(event.contacts,uid);
        final users =await _friendRepository.getUsers(data);
        yield AddSearchNameLoaded(users);
 
-     }
+
+
     }catch(ex){
       yield AddSearchNameLoadFailure(ex.toString());
     }

@@ -4,7 +4,6 @@ import 'package:flutter_snap_chat/blocs/process_contact_bloc/process_contact_blo
 import 'package:flutter_snap_chat/blocs/process_contact_bloc/process_contact_event.dart';
 import 'package:flutter_snap_chat/models/user_model.dart';
 import 'package:flutter_snap_chat/repositories/contact_repository.dart';
-import 'package:flutter_snap_chat/screen_display/profile_screen.dart';
 import 'package:flutter_snap_chat/screen_display/profile_test.dart';
 
 class ProfileContainer extends StatelessWidget {

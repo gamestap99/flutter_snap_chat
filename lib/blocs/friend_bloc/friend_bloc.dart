@@ -4,8 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_snap_chat/blocs/friend_bloc/bloc.dart';
 import 'package:flutter_snap_chat/models/contact_model.dart';
-import 'package:flutter_snap_chat/models/friend_model.dart';
-import 'package:flutter_snap_chat/models/user_model.dart';
 import 'package:flutter_snap_chat/repositories/friend_repository.dart';
 
 class FriendBloc extends Bloc<FriendEvent, FriendState> {
@@ -43,8 +41,8 @@ class FriendBloc extends Bloc<FriendEvent, FriendState> {
     try{
       if(event.contacts.length > 0 ){
         List<String> users= _friendRepository.getIdFriends(event.contacts,uid);
-        final count =await _friendRepository.getCountAcpectFriend(uid);
-        yield FriendLoaed(users,count);
+        // final count =await _friendRepository.getCountAcpectFriend(uid);
+        yield FriendLoaed(users);
       }else{
         yield FriendLoadFail();
       }

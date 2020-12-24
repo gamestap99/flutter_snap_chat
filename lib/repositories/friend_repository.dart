@@ -6,13 +6,15 @@ import 'package:flutter_snap_chat/models/user_model.dart';
 abstract class FriendRepository {
   Stream<List<ContactModel>> friends(String uid);
 
-  List<String> getIdFriends(List<ContactModel> items,String uid);
+  List<String> getIdFriends(List<ContactModel> items, String uid);
 
   Future<UserModel> getUser(String uid);
 
-  Future<List<UserModel>> getUsers(List<String> uids,);
+  Future<List<UserModel>> getUsers(
+    List<String> uids,
+  );
 
-  Future<String> getCountAcpectFriend(String uid);
+  Stream<int> getCountAcpectFriend(String uid);
 
   Stream<List<ContactModel>> getAllApectContact(String uid);
 }
@@ -26,7 +28,7 @@ class ApiFriendRepository implements FriendRepository {
   }
 
   @override
-  List<String> getIdFriends(List<ContactModel> items,String uid) {
+  List<String> getIdFriends(List<ContactModel> items, String uid) {
     // TODO: implement getFriends
     List<String> users = [];
     // friendModel.friends.forEach((key, value) async {
@@ -35,9 +37,9 @@ class ApiFriendRepository implements FriendRepository {
     //   }
     // });
     items.forEach((element) {
-      if(element.senderId == uid){
+      if (element.senderId == uid) {
         users.add(element.receiveId);
-      }else{
+      } else {
         users.add(element.senderId);
       }
     });
@@ -72,9 +74,12 @@ class ApiFriendRepository implements FriendRepository {
   }
 
   @override
-  Future<String> getCountAcpectFriend(String uid) async {
-    QuerySnapshot reference = await FirebaseFirestore.instance.collection('contacts').where("receiveId", isEqualTo: uid).where("status", isEqualTo: "1").get();
-    return reference.docs.length.toString();
+  Stream<int> getCountAcpectFriend(String uid) {
+    print("uid: " + uid);
+    return FirebaseFirestore.instance.collection('contacts').where("receiveId", isEqualTo: uid)
+        .where("status", isEqualTo: "1").snapshots().map((event) {
+      return event.docs.length;
+    });
   }
 
   @override
@@ -86,8 +91,7 @@ class ApiFriendRepository implements FriendRepository {
 
   @override
   Stream<List<ContactModel>> friends(String uid) {
-    return FirebaseFirestore.instance.collection('contacts')
-        .where("status", isEqualTo: "0").snapshots().map((event) {
+    return FirebaseFirestore.instance.collection('contacts').where("status", isEqualTo: "0").snapshots().map((event) {
       return event.docs.length > 0 ? List<ContactModel>.from(event.docs.map((e) => ContactModel.fromSnapShot(e)).toList()) : List<ContactModel>.from([]);
     });
   }

@@ -15,10 +15,10 @@ import 'package:flutter_snap_chat/models/user_model.dart';
 import 'package:flutter_snap_chat/widget/full_photo.dart';
 import 'package:flutter_snap_chat/widget/loading.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:http/http.dart' as http;
 
 import 'blocs/authentication_bloc/authentication_bloc.dart';
 
@@ -30,33 +30,69 @@ class Chat extends StatelessWidget {
   final String name;
   final List<String> members;
 
-
-  Chat({Key key, @required this.peerId,@required this.perToken, @required this.peerAvatar, this.members,@required this.roomID, this.name}) : super(key: key);
+  Chat({
+    Key key,
+    @required this.peerId,
+    @required this.perToken,
+    @required this.peerAvatar,
+    this.members,
+    @required this.roomID,
+    this.name,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'CHAT',
-          style: TextStyle(color: primaryColor, fontWeight: FontWeight.bold),
+        appBar: AppBar(
+          title: Row(
+            children: [
+              Material(
+                child: CachedNetworkImage(
+                  placeholder: (context, url) => Container(
+                    child: CircularProgressIndicator(
+                      strokeWidth: 1.0,
+                      valueColor: AlwaysStoppedAnimation<Color>(themeColor),
+                    ),
+                    width: 35.0,
+                    height: 35.0,
+                    padding: EdgeInsets.all(10.0),
+                  ),
+                  imageUrl: peerAvatar,
+                  width: 35.0,
+                  height: 35.0,
+                  fit: BoxFit.cover,
+                ),
+                borderRadius: BorderRadius.all(
+                  Radius.circular(18.0),
+                ),
+                clipBehavior: Clip.hardEdge,
+              ),
+              SizedBox(
+                width: 5,
+              ),
+              Text(
+                name,
+                style: TextStyle(color: primaryColor, fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
         ),
-        centerTitle: true,
-      ),
-      body: BlocConsumer<ChatCubit,ChatState>(builder: (context,state){
-        if(state is ChatLoaded){
-          return ChatScreen(
-            peerId: peerId,
-            peerAvatar: peerAvatar,
-            name: name,
-            roomID: roomID,
-            members: members, perToken: perToken,
-          );
-        }else{
-          return Container();
-        }
-      }, listener: (context,state){})
-    );
+        body: BlocConsumer<ChatCubit, ChatState>(
+            builder: (context, state) {
+              if (state is ChatLoaded) {
+                return ChatScreen(
+                  peerId: peerId,
+                  peerAvatar: peerAvatar,
+                  name: name,
+                  roomID: roomID,
+                  members: members,
+                  perToken: perToken,
+                );
+              } else {
+                return Container();
+              }
+            },
+            listener: (context, state) {}));
   }
 }
 
@@ -68,15 +104,13 @@ class ChatScreen extends StatefulWidget {
   final List<String> members;
   final String perToken;
 
-  ChatScreen({Key key, @required this.members, @required this.peerId, @required this.peerAvatar, this.roomID, this.name,@required this.perToken}) : super(key: key);
+  ChatScreen({Key key, @required this.members, @required this.peerId, @required this.peerAvatar, this.roomID, this.name, @required this.perToken}) : super(key: key);
 
   @override
   State createState() => ChatScreenState();
 }
 
 class ChatScreenState extends State<ChatScreen> {
-
-
   String _uid;
   String userName;
   List<QueryDocumentSnapshot> listMessage = new List.from([]);
@@ -158,21 +192,20 @@ class ChatScreenState extends State<ChatScreen> {
     });
   }
 
-
   Future uploadFile() async {
     String fileName = DateTime.now().millisecondsSinceEpoch.toString();
     firebase_storage.Reference ref = firebase_storage.FirebaseStorage.instance.ref().child(fileName);
     // final metadata = firebase_storage.SettableMetadata(
     //     contentType: 'image/jpeg',
     //     customMetadata: {'picked-file-path': imageFile.path});
-     await ref.putFile(imageFile);
+    await ref.putFile(imageFile);
     // uploadTask.then(() => )
     // ref.getDownloadURL();
-    var link =await ref.getDownloadURL();
+    var link = await ref.getDownloadURL();
     print(link);
     setState(() {
       isLoading = false;
-      onSendMessage("Đã gửi một ảnh", 1,image: link);
+      onSendMessage("Đã gửi một ảnh", 1, image: link);
     });
     // firebase_storage.TaskSnapshot storageTaskSnapshot =  uploadTask.snapshot;
     // storageTaskSnapshot.ref.getDownloadURL().then((downloadUrl) {
@@ -189,7 +222,7 @@ class ChatScreenState extends State<ChatScreen> {
     // });
   }
 
-  void onSendMessage(String content, int type, {File file,String image}) {
+  void onSendMessage(String content, int type, {File file, String image}) {
     // type: 0 = text, 1 = image, 2 = sticker
     if (content.trim() != '') {
       textEditingController.clear();
@@ -207,7 +240,7 @@ class ChatScreenState extends State<ChatScreen> {
             "content": content,
             "created_at": DateTime.now().microsecondsSinceEpoch.toString(),
             "file": file,
-            "image":image,
+            "image": image,
             "room_id": value.id,
             "sender_id": _uid,
             "type": type.toString(),
@@ -227,7 +260,7 @@ class ChatScreenState extends State<ChatScreen> {
             "content": content,
             "created_at": DateTime.now().microsecondsSinceEpoch.toString(),
             "file": file,
-            "image":image,
+            "image": image,
             "room_id": roomID,
             "sender_id": _uid,
             "type": type.toString(),
@@ -239,43 +272,46 @@ class ChatScreenState extends State<ChatScreen> {
       Fluttertoast.showToast(msg: 'Asss', backgroundColor: Colors.black, textColor: Colors.red);
     }
   }
-  Future<void> sendNotificationMessageToPeerUser(unReadMSGCount,messageType,textFromTextField,myName,chatID,peerUserToken) async {
+
+  Future<void> sendNotificationMessageToPeerUser(unReadMSGCount, messageType, textFromTextField, myName, chatID, peerUserToken) async {
     FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
-    print("sengd"+"jhjghj" +messageType + " " + textFromTextField );
-    print("sengd"+"jhjghj" +myName + " " + peerUserToken + " " + chatID);
+    print("sengd" + "jhjghj" + messageType + " " + textFromTextField);
+    print("sengd" + "jhjghj" + myName + " " + peerUserToken + " " + chatID);
 
-try{
-  await http.post(
-    'https://fcm.googleapis.com/fcm/send',
-    headers: <String, String>{
-      'Content-Type': 'application/json',
-      'Authorization': 'key=$firebaseCloudserverToken',
-    },
-    body: jsonEncode(
-      <String, dynamic>{
-        'notification': <String, dynamic>{
-          'body': messageType == '0' ? '$textFromTextField': messageType == '1' ? 'imagw' :'ticker',
-          'title': '$myName',
-          'badge':'$unReadMSGCount',//'$unReadMSGCount'
-          "sound" : "default"
+    try {
+      await http.post(
+        'https://fcm.googleapis.com/fcm/send',
+        headers: <String, String>{
+          'Content-Type': 'application/json',
+          'Authorization': 'key=$firebaseCloudserverToken',
         },
-        'priority': 'high',
-        'data': <String, dynamic>{
-          'click_action': 'FLUTTER_NOTIFICATION_CLICK',
-          'id': '1',
-          'status': 'done',
-          'chatroomid': chatID,
-        },
-        'to': peerUserToken,
-      },
-    ),
-  );
-
-}catch(ex){
-  print("error post:" +ex.toString());
-}
-    final Completer<Map<String, dynamic>> completer =
-    Completer<Map<String, dynamic>>();
+        body: jsonEncode(
+          <String, dynamic>{
+            'notification': <String, dynamic>{
+              'body': messageType == '0'
+                  ? '$textFromTextField'
+                  : messageType == '1'
+                      ? 'imagw'
+                      : 'ticker',
+              'title': '$myName',
+              'badge': '$unReadMSGCount', //'$unReadMSGCount'
+              "sound": "default"
+            },
+            'priority': 'high',
+            'data': <String, dynamic>{
+              'click_action': 'FLUTTER_NOTIFICATION_CLICK',
+              'id': '1',
+              'status': 'done',
+              'chatroomid': chatID,
+            },
+            'to': peerUserToken,
+          },
+        ),
+      );
+    } catch (ex) {
+      print("error post:" + ex.toString());
+    }
+    final Completer<Map<String, dynamic>> completer = Completer<Map<String, dynamic>>();
 
     _firebaseMessaging.configure(
       onMessage: (Map<String, dynamic> message) async {
@@ -283,6 +319,7 @@ try{
       },
     );
   }
+
   Widget buildItem(int index, DocumentSnapshot document, List<UserModel> users) {
     if (document.data()['sender_id'] == _uid) {
       // Right (my message)
@@ -299,62 +336,64 @@ try{
                   width: 200.0,
                   decoration: BoxDecoration(color: greyColor2, borderRadius: BorderRadius.circular(8.0)),
                   margin: EdgeInsets.only(bottom: isLastMessageRight(index) ? 20.0 : 10.0, right: 10.0),
-                ):
-          document.data()['type'] == "1" ?
-              // Image
-              Container(
-                  child: FlatButton(
-                    child: Material(
-                      child: CachedNetworkImage(
-                        placeholder: (context, url) => Container(
-                          child: CircularProgressIndicator(
-                            valueColor: AlwaysStoppedAnimation<Color>(themeColor),
-                          ),
-                          width: 200.0,
-                          height: 200.0,
-                          padding: EdgeInsets.all(70.0),
-                          decoration: BoxDecoration(
-                            color: greyColor2,
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(8.0),
+                )
+              : document.data()['type'] == "1"
+                  ?
+                  // Image
+                  Container(
+                      child: FlatButton(
+                        child: Material(
+                          child: CachedNetworkImage(
+                            placeholder: (context, url) => Container(
+                              child: CircularProgressIndicator(
+                                valueColor: AlwaysStoppedAnimation<Color>(themeColor),
+                              ),
+                              width: 200.0,
+                              height: 200.0,
+                              padding: EdgeInsets.all(70.0),
+                              decoration: BoxDecoration(
+                                color: greyColor2,
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(8.0),
+                                ),
+                              ),
                             ),
-                          ),
-                        ),
-                        errorWidget: (context, url, error) => Material(
-                          child: Image.asset(
-                            'assets/img_not_available.jpeg',
+                            errorWidget: (context, url, error) => Material(
+                              child: Image.asset(
+                                'assets/img_not_available.jpeg',
+                                width: 200.0,
+                                height: 200.0,
+                                fit: BoxFit.cover,
+                              ),
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(8.0),
+                              ),
+                              clipBehavior: Clip.hardEdge,
+                            ),
+                            imageUrl: document.data()['image'],
                             width: 200.0,
                             height: 200.0,
                             fit: BoxFit.cover,
                           ),
-                          borderRadius: BorderRadius.all(
-                            Radius.circular(8.0),
-                          ),
+                          borderRadius: BorderRadius.all(Radius.circular(8.0)),
                           clipBehavior: Clip.hardEdge,
                         ),
-                        imageUrl: document.data()['image'],
-                        width: 200.0,
-                        height: 200.0,
+                        onPressed: () {
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => FullPhoto(url: document.data()['content'])));
+                        },
+                        padding: EdgeInsets.all(0),
+                      ),
+                      margin: EdgeInsets.only(bottom: isLastMessageRight(index) ? 20.0 : 10.0, right: 10.0),
+                    )
+                  : Container(
+                      child: Image.asset(
+                        'assets/${document.data()['image']}.gif',
+                        width: 100.0,
+                        height: 100.0,
                         fit: BoxFit.cover,
                       ),
-                      borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                      clipBehavior: Clip.hardEdge,
+                      margin: EdgeInsets.only(bottom: isLastMessageRight(index) ? 20.0 : 10.0, right: 10.0),
                     ),
-                    onPressed: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => FullPhoto(url: document.data()['content'])));
-                    },
-                    padding: EdgeInsets.all(0),
-                  ),
-                  margin: EdgeInsets.only(bottom: isLastMessageRight(index) ? 20.0 : 10.0, right: 10.0),
-                ) : Container(
-            child: Image.asset(
-              'assets/${document.data()['image']}.gif',
-              width: 100.0,
-              height: 100.0,
-              fit: BoxFit.cover,
-            ),
-            margin: EdgeInsets.only(bottom: isLastMessageRight(index) ? 20.0 : 10.0, right: 10.0),
-          ),
           // Sticker,
         ],
         mainAxisAlignment: MainAxisAlignment.end,
@@ -363,8 +402,8 @@ try{
       // Left (peer message)
       UserModel user;
       users.forEach((element) {
-        if(element.id == document.data()['sender_id']){
-            user = element;
+        if (element.id == document.data()['sender_id']) {
+          user = element;
         }
       });
 
@@ -514,35 +553,37 @@ try{
     _uid = context.select((AuthenticationBloc bloc) => bloc.state.user.id.toString());
     userName = context.select((UserProviderCubit cubit) => cubit.state.userModel.name.toString());
 
-    return BlocConsumer<ChatCubit,ChatState>(builder: (context,state){
-      if(state is ChatLoading){
-        return Container();
-      }else if(state is ChatLoaded){
-        return WillPopScope(
-          child: Stack(
-            children: <Widget>[
-              Column(
+    return BlocConsumer<ChatCubit, ChatState>(
+        builder: (context, state) {
+          if (state is ChatLoading) {
+            return Container();
+          } else if (state is ChatLoaded) {
+            return WillPopScope(
+              child: Stack(
                 children: <Widget>[
-                  // List of messages
-                  buildListMessage(state.users),
+                  Column(
+                    children: <Widget>[
+                      // List of messages
+                      buildListMessage(state.users),
 
-                  // Sticker
-                  (isShowSticker ? buildSticker() : Container()),
+                      // Sticker
+                      (isShowSticker ? buildSticker() : Container()),
 
-                  // Input content
-                  buildInput(),
+                      // Input content
+                      buildInput(),
+                    ],
+                  ),
+
+                  // Loading
+                  buildLoading()
                 ],
               ),
-
-              // Loading
-              buildLoading()
-            ],
-          ),
-          onWillPop: onBackPress,
-        );
-      }
-      return Container();
-    }, listener: (context,state){});
+              onWillPop: onBackPress,
+            );
+          }
+          return Container();
+        },
+        listener: (context, state) {});
   }
 
   Widget buildSticker() {
@@ -552,7 +593,7 @@ try{
           Row(
             children: <Widget>[
               FlatButton(
-                onPressed: () => onSendMessage('Đã gửi một Sticker', 2,image: 'mimi1'),
+                onPressed: () => onSendMessage('Đã gửi một Sticker', 2, image: 'mimi1'),
                 child: Image.asset(
                   'assets/mimi1.gif',
                   width: 50.0,
@@ -561,7 +602,7 @@ try{
                 ),
               ),
               FlatButton(
-                onPressed: () => onSendMessage('Đã gửi một Sticker', 2,image: 'mimi2'),
+                onPressed: () => onSendMessage('Đã gửi một Sticker', 2, image: 'mimi2'),
                 child: Image.asset(
                   'assets/mimi2.gif',
                   width: 50.0,
@@ -570,7 +611,7 @@ try{
                 ),
               ),
               FlatButton(
-                onPressed: () => onSendMessage('Đã gửi một Sticker', 2,image:'mimi3'),
+                onPressed: () => onSendMessage('Đã gửi một Sticker', 2, image: 'mimi3'),
                 child: Image.asset(
                   'assets/mimi3.gif',
                   width: 50.0,
@@ -584,7 +625,7 @@ try{
           Row(
             children: <Widget>[
               FlatButton(
-                onPressed: () => onSendMessage('Đã gửi một Sticker', 2,image:'mimi4'),
+                onPressed: () => onSendMessage('Đã gửi một Sticker', 2, image: 'mimi4'),
                 child: Image.asset(
                   'assets/mimi4.gif',
                   width: 50.0,
@@ -593,7 +634,7 @@ try{
                 ),
               ),
               FlatButton(
-                onPressed: () => onSendMessage('Đã gửi một Sticker', 2,image: 'mimi5'),
+                onPressed: () => onSendMessage('Đã gửi một Sticker', 2, image: 'mimi5'),
                 child: Image.asset(
                   'assets/mimi5.gif',
                   width: 50.0,
@@ -602,7 +643,7 @@ try{
                 ),
               ),
               FlatButton(
-                onPressed: () => onSendMessage('Đã gửi một Sticker', 2,image: 'mimi6'),
+                onPressed: () => onSendMessage('Đã gửi một Sticker', 2, image: 'mimi6'),
                 child: Image.asset(
                   'assets/mimi6.gif',
                   width: 50.0,
@@ -616,7 +657,7 @@ try{
           Row(
             children: <Widget>[
               FlatButton(
-                onPressed: () => onSendMessage('Đã gửi một Sticker', 2,image: 'mimi7'),
+                onPressed: () => onSendMessage('Đã gửi một Sticker', 2, image: 'mimi7'),
                 child: Image.asset(
                   'assets/mimi7.gif',
                   width: 50.0,
@@ -625,7 +666,7 @@ try{
                 ),
               ),
               FlatButton(
-                onPressed: () => onSendMessage('Đã gửi một Sticker', 2,image: 'mimi8'),
+                onPressed: () => onSendMessage('Đã gửi một Sticker', 2, image: 'mimi8'),
                 child: Image.asset(
                   'assets/mimi8.gif',
                   width: 50.0,
@@ -634,7 +675,7 @@ try{
                 ),
               ),
               FlatButton(
-                onPressed: () => onSendMessage('Đã gửi một Sticker', 2,image: 'mimi9'),
+                onPressed: () => onSendMessage('Đã gửi một Sticker', 2, image: 'mimi9'),
                 child: Image.asset(
                   'assets/mimi9.gif',
                   width: 50.0,
@@ -741,7 +782,7 @@ try{
                   return ListView.builder(
                     padding: EdgeInsets.all(10.0),
                     itemBuilder: (context, index) {
-                      return buildItem(index, snapshot.data.documents[index],users);
+                      return buildItem(index, snapshot.data.documents[index], users);
                     },
                     itemCount: snapshot.data.documents.length,
                     reverse: true,
