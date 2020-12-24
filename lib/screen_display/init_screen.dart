@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_snap_chat/blocs/authentication_bloc/bloc.dart';
+import 'package:flutter_snap_chat/blocs/user_provider_bloc/user_provider_cubit.dart';
 import 'package:flutter_snap_chat/router.dart';
 
 class InitScreen extends StatelessWidget {
@@ -13,9 +14,10 @@ class InitScreen extends StatelessWidget {
             Navigator.of(context).pushNamedAndRemoveUntil(AppRoutes.login, (route) => false);
             break;
           case AuthenticationStatus.authenticated:
-            Navigator.of(context).pushNamedAndRemoveUntil(AppRoutes.chatDisplay, (route) => false,arguments: {
-              "userId":state.user.id,
-            });
+            context.read<UserProviderCubit>().getUser(state.user.id).then((value) => Navigator.of(context).pushNamedAndRemoveUntil(AppRoutes.chatDisplay, (route) => false, arguments: {
+                  "userId": state.user.id,
+                }));
+
             break;
           default:
             Navigator.of(context).pushNamedAndRemoveUntil(AppRoutes.login, (route) => false);
