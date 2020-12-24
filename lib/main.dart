@@ -4,18 +4,28 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_snap_chat/blocs/authentication_bloc/bloc.dart';
-import 'package:flutter_snap_chat/repositories/user_repository/user_repository.dart';
+import 'package:flutter_snap_chat/blocs/process_contact_bloc/process_contact_bloc.dart';
+import 'package:flutter_snap_chat/blocs/user_provider_bloc/user_provider_cubit.dart';
+import 'package:flutter_snap_chat/database/user.g.dart';
+import 'package:flutter_snap_chat/repositories/contact_repository.dart';
+import 'package:flutter_snap_chat/repositories/friend_repository.dart';
 import 'package:flutter_snap_chat/router.dart';
 import 'package:flutter_snap_chat/simple_bloc_observer.dart';
+import 'package:hive/hive.dart';
+import 'package:path_provider/path_provider.dart' as path_provider;
+
+import 'file:///E:/btl%20di%20dong/btl_didong/flutter_snap_chat/lib/repositories/user_repository.dart';
 
 import 'const.dart';
-import 'login.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   EquatableConfig.stringify = kDebugMode;
   Bloc.observer = SimpleBlocObserver();
+  final appDocumentDirectory = await path_provider.getApplicationDocumentsDirectory();
+  Hive.init(appDocumentDirectory.path);
+  Hive.registerAdapter(UserAdapter());
   runApp(MyApp(
     authenticationRepository: AuthenticationRepository(),
   ));
@@ -31,12 +41,21 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return RepositoryProvider.value(
-      value: authenticationRepository,
-      child: BlocProvider(
-        create: (_) => AuthenticationBloc(authenticationRepository: authenticationRepository),
-        child: MyAppView(),
-      ),
-    );
+        value: authenticationRepository,
+        child: MultiBlocProvider(
+          providers: [
+            BlocProvider(
+              create: (_) => AuthenticationBloc(authenticationRepository: authenticationRepository),
+            ),
+            BlocProvider(
+              create: (_) => ProcessContactBloc(ApiContactRepository()),
+            ),
+            BlocProvider(
+              create: (_) => UserProviderCubit(ApiFriendRepository()),
+            )
+          ],
+          child: MyAppView(),
+        ));
   }
 }
 
@@ -49,6 +68,7 @@ class _MyAppViewState extends State<MyAppView> {
   final _navigatorKey = GlobalKey<NavigatorState>();
 
   NavigatorState get _navigator => _navigatorKey.currentState;
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
