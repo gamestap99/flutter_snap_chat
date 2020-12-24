@@ -3,11 +3,14 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:flutter_snap_chat/database/user.dart';
-import 'package:flutter_snap_chat/models/user_model.dart';
+import 'package:flutter_snap_chat/repositories/user_firebase.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:hive/hive.dart';
 import 'package:meta/meta.dart';
 
+
+
+/// Thrown if during the sign up process if a failure occurs.
 class SignUpFailure implements Exception {}
 
 /// Thrown during the login process if a failure occurs.
@@ -37,11 +40,9 @@ class AuthenticationRepository {
   /// the authentication state changes.
   ///
   /// Emits [User.empty] if the user is not authenticated.
-  Stream<UserModel> get user {
-    return Hive.openBox('user').asStream().map((event) {
-      return event.isEmpty ?
-      UserModel.empty :
-      UserModel(id: (event.getAt(0) as UserDB).id, name: (event.getAt(0) as UserDB).name, photo: (event.getAt(0) as UserDB).photoUrl);
+  Stream<UserFirebase> get user {
+    return _firebaseAuth.authStateChanges().map((firebaseUser) {
+      return firebaseUser == null ? UserFirebase.empty : firebaseUser.toUser;
     });
   }
 
@@ -57,7 +58,9 @@ class AuthenticationRepository {
       await _firebaseAuth.createUserWithEmailAndPassword(
         email: email,
         password: password,
-      );
+      ).then((value) {
+        FirebaseFirestore.instance.collection('users').doc(value.user.uid).set({});
+      });
     } on Exception {
       throw SignUpFailure();
     }
@@ -93,21 +96,21 @@ class AuthenticationRepository {
         email: email,
         password: password,
       ).then((value) {
-              FirebaseFirestore.instance.collection('users').doc(value.user.uid).get().then((value) {
-                writeDatabase(value);
-              });
+        FirebaseFirestore.instance.collection('users').doc(value.user.uid).get().then((value) {
+          // writeDatabase(value);
+        });
       });
     } on Exception {
       throw LogInWithEmailAndPasswordFailure();
     }
   }
 
-  Future<void> writeDatabase(DocumentSnapshot documentSnapshot) async {
-    var box = await Hive.openBox('user');
-    var user = UserDB(documentSnapshot.id, documentSnapshot.data()['nickname'], documentSnapshot.data()['photoUrl']);
-    box.add(user);
+  // Future<void> writeDatabase(DocumentSnapshot documentSnapshot) async {
+  //   var box = await Hive.openBox('user');
+  //   var user = UserDB(documentSnapshot.id, documentSnapshot.data()['nickname'], documentSnapshot.data()['photoUrl']);
+  //   box.add(user);
+  // }
 
-  }
   /// Signs out the current user which will emit
   /// [User.empty] from the [user] Stream.
   ///
@@ -118,7 +121,6 @@ class AuthenticationRepository {
         _firebaseAuth.signOut(),
         _googleSignIn.signOut(),
       ]);
-      Hive.box('user').clear();
     } on Exception {
       throw LogOutFailure();
     }
@@ -126,7 +128,7 @@ class AuthenticationRepository {
 }
 
 extension on firebase_auth.User {
-  UserModel get toUser {
-    return UserModel(id: uid, name: displayName, photo: photoURL);
+  UserFirebase get toUser {
+    return UserFirebase(id: uid, email: email, name: displayName, photo: photoURL);
   }
 }

@@ -24,7 +24,7 @@ class LoginScreen extends StatelessWidget {
               );
           }
           else if(state.status.isSubmissionSuccess){
-            Navigator.of(context).pushNamedAndRemoveUntil(AppRoutes.chatDisplay, (route) => false);
+            Navigator.of(context).pushNamedAndRemoveUntil(AppRoutes.init, (route) => false);
           }
         },
         child: Align(
