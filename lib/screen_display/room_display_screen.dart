@@ -167,7 +167,7 @@ class _RoomDisplayScreenState extends State<RoomDisplayScreen> {
                     name: e.name,
                     roomImage: e.photo,
                     type: e.type,
-                    id: uid,
+                    id: uid, roomModel: e,
                   );
                 }).toList(),
               );

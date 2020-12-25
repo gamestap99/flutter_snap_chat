@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_snap_chat/blocs/authentication_bloc/bloc.dart';
 import 'package:flutter_snap_chat/blocs/chat_bloc/bloc.dart';
-import 'package:flutter_snap_chat/chat.dart';
+import 'file:///E:/btl%20di%20dong/btl_didong/flutter_snap_chat/lib/screen_display/chat.dart';
 import 'package:flutter_snap_chat/repositories/chat_repository.dart';
 import 'package:flutter_snap_chat/repositories/friend_repository.dart';
 
@@ -19,9 +19,10 @@ class ChatContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     String uid = context.select((AuthenticationBloc bloc) => bloc.state.user.id.toString());
+    print("chat conter uid"+ uid.toString());
     return BlocProvider(
       create: (_) =>
-      ChatCubit(repository: ApiChatRepository(), roomId: null, friendRepository: ApiFriendRepository())
+      ChatCubit(repository: ApiChatRepository(), friendRepository: ApiFriendRepository())
         ..getUser(member, uid),
       child: Chat(
         peerId: peerId,

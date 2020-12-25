@@ -20,7 +20,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'blocs/authentication_bloc/authentication_bloc.dart';
+import '../blocs/authentication_bloc/authentication_bloc.dart';
 
 class Chat extends StatelessWidget {
   final String peerId;
@@ -233,7 +233,7 @@ class ChatScreenState extends State<ChatScreen> {
           'last_message': content,
           'member': widget.members,
           'name': "",
-          "roomImage": "",
+          "roomImage": null,
           'type': "1",
         }).then((value) {
           messages.add({
@@ -550,7 +550,7 @@ class ChatScreenState extends State<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
-    _uid = context.select((AuthenticationBloc bloc) => bloc.state.user.id.toString());
+    _uid = context.select((UserProviderCubit bloc) => bloc.state.userModel.id.toString());
     userName = context.select((UserProviderCubit cubit) => cubit.state.userModel.name.toString());
 
     return BlocConsumer<ChatCubit, ChatState>(

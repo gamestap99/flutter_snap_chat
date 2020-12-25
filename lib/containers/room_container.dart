@@ -11,10 +11,12 @@ class RoomContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     String uid = context.select((AuthenticationBloc bloc) => bloc.state.user.id.toString());
-    print("uid" + uid);
+
+    Map<String, dynamic> argument = ModalRoute.of(context).settings.arguments;
+
     return BlocProvider(
-      create: (_) => RoomBloc(ApiRoomRepository(), uid),
-      child: RoomDisplayScreen(uid: uid,),
+      create: (_) => RoomBloc(ApiRoomRepository(), argument['userId']),
+      child: RoomDisplayScreen(uid: argument['userId'],),
     );
   }
 }
