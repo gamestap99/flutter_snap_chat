@@ -5,11 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_snap_chat/blocs/authentication_bloc/bloc.dart';
 import 'package:flutter_snap_chat/blocs/count_request_friend_bloc/count_request_friend_bloc.dart';
-import 'package:flutter_snap_chat/blocs/count_request_friend_bloc/count_request_friend_state.dart';
 import 'package:flutter_snap_chat/blocs/friend_bloc/bloc.dart';
 import 'package:flutter_snap_chat/const.dart';
 import 'package:flutter_snap_chat/containers/process_friend_container.dart';
-import 'package:flutter_snap_chat/widget/bottom_navigate.dart';
+import 'package:flutter_snap_chat/containers/profile_container.dart';
+import 'package:flutter_snap_chat/models/user_model.dart';
+import 'package:flutter_snap_chat/screen_display/profile_test.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class FriendDisplayScreen extends StatefulWidget {
@@ -47,8 +48,13 @@ class _FriendDisplayScreenState extends State<FriendDisplayScreen> {
                   Row(
                     children: [
                       FaIcon(FontAwesomeIcons.userPlus),
-                      SizedBox(width: 5,),
-                      Text("Lời mời kết bạn",style: TextStyle(fontSize: 15,fontWeight: FontWeight.w700),),
+                      SizedBox(
+                        width: 5,
+                      ),
+                      Text(
+                        "Lời mời kết bạn",
+                        style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700),
+                      ),
                     ],
                   ),
                   Text(
@@ -92,7 +98,11 @@ class _FriendDisplayScreenState extends State<FriendDisplayScreen> {
                     ],
                   );
                 }
-                return Container(child: Center(child: Text('Chưa có bạn bè'),),);
+                return Container(
+                  child: Center(
+                    child: Text('Chưa có bạn bè'),
+                  ),
+                );
               },
               listener: (context, state) {}),
         ],
@@ -108,30 +118,49 @@ class _FriendDisplayScreenState extends State<FriendDisplayScreen> {
         child: FlatButton(
           child: Row(
             children: <Widget>[
-              Material(
-                child: snapshot.data()['photoUrl'] != null
-                    ? CachedNetworkImage(
-                        placeholder: (context, url) => Container(
-                          child: CircularProgressIndicator(
-                            strokeWidth: 1.0,
-                            valueColor: AlwaysStoppedAnimation<Color>(themeColor),
-                          ),
-                          width: 50.0,
-                          height: 50.0,
-                          padding: EdgeInsets.all(15.0),
-                        ),
-                        imageUrl: snapshot.data()['photoUrl'],
-                        width: 50.0,
-                        height: 50.0,
-                        fit: BoxFit.cover,
-                      )
-                    : Icon(
-                        Icons.account_circle,
-                        size: 50.0,
-                        color: greyColor,
+              Stack(
+                children: [
+                  Container(
+                    child: Padding(
+                      padding: const EdgeInsets.all(5.0),
+                      child: Material(
+                        child: snapshot.data()['photoUrl'] != null
+                            ? CachedNetworkImage(
+                                placeholder: (context, url) => Container(
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 1.0,
+                                    valueColor: AlwaysStoppedAnimation<Color>(themeColor),
+                                  ),
+                                  width: 50.0,
+                                  height: 50.0,
+                                  padding: EdgeInsets.all(15.0),
+                                ),
+                                imageUrl: snapshot.data()['photoUrl'],
+                                width: 50.0,
+                                height: 50.0,
+                                fit: BoxFit.cover,
+                              )
+                            : Icon(
+                                Icons.account_circle,
+                                size: 50.0,
+                                color: greyColor,
+                              ),
+                        borderRadius: BorderRadius.all(Radius.circular(25.0)),
+                        clipBehavior: Clip.hardEdge,
                       ),
-                borderRadius: BorderRadius.all(Radius.circular(25.0)),
-                clipBehavior: Clip.hardEdge,
+                    ),
+                  ),
+                  Positioned(
+                    top: 35,
+                    left: 35,
+                    child: snapshot.data()['status'].toString() == "0"
+                        ? Icon(
+                            Icons.circle,
+                            color: Colors.green,
+                          )
+                        : Icon(Icons.circle),
+                  )
+                ],
               ),
               Flexible(
                 child: Container(
@@ -153,15 +182,19 @@ class _FriendDisplayScreenState extends State<FriendDisplayScreen> {
             ],
           ),
           onPressed: () {
-            // Navigator.push(
-            //     context,
-            //     MaterialPageRoute(
-            //         builder: (context) => ProfileScreen(
-            //           id: id,
-            //           peerId: userModel.id,
-            //           peerAvatar: userModel.photo,
-            //           peerName: userModel.name,
-            //         )));
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => ProfileContainer(
+                          uid: uid,
+                          peerUser: UserModel(
+                            id: snapshot.id,
+                            name: snapshot.data()['nickname'],
+                            photo: snapshot.data()['photoUrl'],
+                            fcmToken: snapshot.data()['pushToken'],
+                            status: snapshot.data()['status'],
+                          ),
+                        )));
           },
           color: greyColor2,
           padding: EdgeInsets.fromLTRB(25.0, 10.0, 25.0, 10.0),

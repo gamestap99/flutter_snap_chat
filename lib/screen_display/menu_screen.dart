@@ -1,4 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_snap_chat/blocs/authentication_bloc/bloc.dart';
 import 'package:flutter_snap_chat/blocs/user_provider_bloc/user_provider_cubit.dart';
@@ -46,6 +48,18 @@ class MenuScreen extends StatelessWidget {
             Text(user.name.toString()),
             MaterialButton(
               onPressed: () {
+                FirebaseAuth.instance
+                    .authStateChanges()
+                    .listen((User user) {
+                  if (user == null) {
+                    print('User is currently signed out!');
+                  } else {
+                    FirebaseFirestore.instance.collection('users')
+                        .doc(user.uid).update({
+                      'status':"1",
+                    });
+                  }
+                });
                 Navigator.of(context).pushNamedAndRemoveUntil(AppRoutes.init, (route) => false);
                 context.read<AuthenticationBloc>().add(AuthenticationLogoutRequested());
               },

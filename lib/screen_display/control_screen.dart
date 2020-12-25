@@ -1,7 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_snap_chat/blocs/count_request_friend_bloc/count_request_friend_bloc.dart';
 import 'package:flutter_snap_chat/blocs/count_request_friend_bloc/count_request_friend_state.dart';
+import 'package:flutter_snap_chat/blocs/user_provider_bloc/user_provider_cubit.dart';
+import 'package:flutter_snap_chat/blocs/user_provider_bloc/user_provider_state.dart';
 import 'package:flutter_snap_chat/containers/containers.dart';
 import 'package:flutter_snap_chat/containers/group_container.dart';
 import 'package:flutter_snap_chat/widget/bottom_navigate.dart';
@@ -80,11 +84,14 @@ class _ControlScreenState extends State<ControlScreen> {
                 child: Positioned(
                   top: -3,
                   left: 15,
-                  child: Text(state.count.toString(),style: TextStyle(
-                    fontSize: 17,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.red,
-                  ),),
+                  child: Text(
+                    state.count.toString(),
+                    style: TextStyle(
+                      fontSize: 17,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.red,
+                    ),
+                  ),
                 ),
               );
             }),
@@ -99,11 +106,14 @@ class _ControlScreenState extends State<ControlScreen> {
                 child: Positioned(
                   top: -3,
                   left: 15,
-                  child: Text(state.count.toString(),style: TextStyle(
-                    fontSize: 17,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.red,
-                  ),),
+                  child: Text(
+                    state.count.toString(),
+                    style: TextStyle(
+                      fontSize: 17,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.red,
+                    ),
+                  ),
                 ),
               );
             }),
@@ -120,28 +130,32 @@ class _ControlScreenState extends State<ControlScreen> {
         label: 'Kết nối',
       ),
     ];
-    // navs.asMap().forEach((index, element) {
-    //   items.add(BottomNavigationBarItem(
-    //     icon: Stack(
-    //       children: [
-    //         element.navIcon,
-    //         BlocBuilder<CountRequestFriendBloc, CountRequestFriendState>(builder: (context, state) {
-    //           return Visibility(
-    //             visible: state.count == 0 ? true : true,
-    //             child: Positioned(
-    //               top: -3,
-    //               left: 15,
-    //               child: Text(state.count.toString()),
-    //             ),
-    //           );
-    //         }),
-    //       ],
-    //     ),
-    //     label: element.title,
-    //   ));
-    // });
+
     return Scaffold(
-      body: buildPageView(),
+      body: BlocConsumer<UserProviderCubit, UserProviderState>(
+          builder: (context, state) {
+            return state.status == UserProviderStatus.success
+                ? buildPageView()
+                : Center(
+                    child: CircularProgressIndicator(),
+                  );
+          },
+          listener: (context,state){
+            if(state.status == UserProviderStatus.success){
+              FirebaseAuth.instance
+                  .authStateChanges()
+                  .listen((User user) {
+                if (user == null) {
+                  print('User is currently signed out!');
+                } else {
+                  FirebaseFirestore.instance.collection('users')
+                      .doc(user.uid).update({
+                    'status':"0",
+                  });
+                }
+              });
+            }
+          }),
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         currentIndex: bottomSelectedIndex,

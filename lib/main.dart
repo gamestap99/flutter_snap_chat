@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
@@ -13,6 +14,7 @@ import 'package:flutter_snap_chat/router.dart';
 import 'package:flutter_snap_chat/simple_bloc_observer.dart';
 import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart' as path_provider;
+import 'package:firebase_auth/firebase_auth.dart';
 
 import 'file:///E:/btl%20di%20dong/btl_didong/flutter_snap_chat/lib/repositories/user_repository.dart';
 
@@ -64,11 +66,73 @@ class MyAppView extends StatefulWidget {
   _MyAppViewState createState() => _MyAppViewState();
 }
 
-class _MyAppViewState extends State<MyAppView> {
+class _MyAppViewState extends State<MyAppView> with WidgetsBindingObserver{
   final _navigatorKey = GlobalKey<NavigatorState>();
 
   NavigatorState get _navigator => _navigatorKey.currentState;
 
+  @override
+  initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    switch(state){
+      case AppLifecycleState.resumed:
+        FirebaseAuth.instance
+            .authStateChanges()
+            .listen((User user) {
+          if (user == null) {
+            print('User is currently signed out!');
+          } else {
+            FirebaseFirestore.instance.collection('users')
+                .doc(user.uid).update({
+              'status':"0",
+            });
+          }
+        });
+        break;
+      case AppLifecycleState.inactive:
+        FirebaseAuth.instance
+            .authStateChanges()
+            .listen((User user) {
+          if (user == null) {
+            print('User is currently signed out!');
+          } else {
+            FirebaseFirestore.instance.collection('users')
+                .doc(user.uid).update({
+              'status':"1",
+            });
+          }
+        });
+        break;
+      case AppLifecycleState.paused:
+        FirebaseAuth.instance
+            .authStateChanges()
+            .listen((User user) {
+          if (user == null) {
+            print('User is currently signed out!');
+          } else {
+           FirebaseFirestore.instance.collection('users')
+               .doc(user.uid).update({
+             'status':"1",
+           });
+          }
+        });
+        break;
+      case AppLifecycleState.detached:
+        print("app in detached");
+        break;
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return MaterialApp(

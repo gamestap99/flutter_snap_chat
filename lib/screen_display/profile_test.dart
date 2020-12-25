@@ -14,7 +14,7 @@ class ProfileTest extends StatefulWidget {
   final String uid;
   final UserModel peerUser;
 
-  const ProfileTest({Key key, this.uid, this.peerUser}) : super(key: key);
+  const ProfileTest({Key key,@required this.uid,@required this.peerUser}) : super(key: key);
 
   @override
   _ProfileTestState createState() => _ProfileTestState();

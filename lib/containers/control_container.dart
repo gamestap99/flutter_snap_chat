@@ -9,12 +9,17 @@ import 'package:flutter_snap_chat/screen_display/control_screen.dart';
 class ControlContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    String uid = context.select((UserProviderCubit bloc) => bloc.state.userModel.id.toString());
+    String uid = context.select((AuthenticationBloc bloc) => bloc.state.user.id.toString());
+    print(uid + "uid:  " +uid);
+    Map<String,dynamic> argument= ModalRoute.of(context).settings.arguments;
     return MultiBlocProvider(
       providers: [
         BlocProvider(
           create: (_) => CountRequestFriendBloc(ApiFriendRepository(), uid),
         ),
+        BlocProvider(
+          create: (_)=>UserProviderCubit(ApiFriendRepository())..getUser(argument["userId"]),
+        )
       ],
       child: ControlScreen(),
     );

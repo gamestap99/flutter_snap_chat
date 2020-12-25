@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_snap_chat/blocs/authentication_bloc/bloc.dart';
@@ -11,12 +13,14 @@ class InitScreen extends StatelessWidget {
       listener: (context, state) {
         switch (state.status) {
           case AuthenticationStatus.unauthenticated:
+
             Navigator.of(context).pushNamedAndRemoveUntil(AppRoutes.login, (route) => false);
             break;
           case AuthenticationStatus.authenticated:
-            context.read<UserProviderCubit>().getUser(state.user.id).then((value) => Navigator.of(context).pushNamedAndRemoveUntil(AppRoutes.control, (route) => false, arguments: {
-                  "userId": state.user.id,
-                }));
+            Navigator.of(context).pushNamedAndRemoveUntil(AppRoutes.control, (route) => false, arguments: {
+              "userId": state.user.id,
+            });
+            // context.read<UserProviderCubit>().getUser(state.user.id).then((value) => );
 
             break;
           default:

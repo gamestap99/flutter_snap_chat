@@ -1,17 +1,14 @@
-
-
 import 'package:equatable/equatable.dart';
-import 'package:flutter_snap_chat/database/user.dart';
 import 'package:meta/meta.dart';
 
-class UserModel extends Equatable{
+class UserModel extends Equatable {
   const UserModel({
     @required this.id,
     @required this.name,
     @required this.photo,
     @required this.fcmToken,
-  })  :
-        assert(id != null);
+    @required this.status,
+  }) : assert(id != null);
 
   /// The current user's email address.
 
@@ -25,11 +22,11 @@ class UserModel extends Equatable{
   final String photo;
 
   final String fcmToken;
+  final String status;
 
   /// Empty user which represents an unauthenticated user.
-  static const empty = UserModel( id: '', name: null, photo: null,fcmToken:null );
-
+  static const empty = UserModel(id: '', name: null, photo: null, fcmToken: null, status: null);
 
   @override
-  List<Object> get props => [ id, name, photo,fcmToken];
+  List<Object> get props => [id, name, photo, fcmToken, status];
 }
