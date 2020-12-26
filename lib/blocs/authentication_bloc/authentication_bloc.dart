@@ -1,5 +1,3 @@
-
-
 import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -9,6 +7,7 @@ import 'package:flutter_snap_chat/repositories/user_firebase.dart';
 import 'package:flutter_snap_chat/repositories/user_repository.dart';
 import 'package:meta/meta.dart';
 import 'package:pedantic/pedantic.dart';
+
 class AuthenticationBloc
     extends Bloc<AuthenticationEvent, AuthenticationState> {
   AuthenticationBloc({
@@ -17,7 +16,7 @@ class AuthenticationBloc
         _authenticationRepository = authenticationRepository,
         super(const AuthenticationState.unknown()) {
     _userSubscription = _authenticationRepository.user.listen(
-          (user) => add(AuthenticationUserChanged(user)),
+      (user) => add(AuthenticationUserChanged(user)),
     );
   }
 
@@ -26,8 +25,8 @@ class AuthenticationBloc
 
   @override
   Stream<AuthenticationState> mapEventToState(
-      AuthenticationEvent event,
-      ) async* {
+    AuthenticationEvent event,
+  ) async* {
     if (event is AuthenticationUserChanged) {
       yield _mapAuthenticationUserChangedToState(event);
     } else if (event is AuthenticationLogoutRequested) {
@@ -42,8 +41,8 @@ class AuthenticationBloc
   }
 
   AuthenticationState _mapAuthenticationUserChangedToState(
-      AuthenticationUserChanged event,
-      ) {
+    AuthenticationUserChanged event,
+  ) {
     return event.user != UserFirebase.empty
         ? AuthenticationState.authenticated(event.user)
         : const AuthenticationState.unauthenticated();

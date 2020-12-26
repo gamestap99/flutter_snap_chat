@@ -37,7 +37,7 @@ class _AddGroupDisplayScreenState extends State<AddGroupDisplayScreen> {
       appBar: AppBar(
         title: Text("Tạo nhóm chat"),
         actions: [
-          lstIndexAddUsers.length > 0 ? MaterialButton(
+          lstIndexAddUsers.length > 1 ? MaterialButton(
             onPressed: () => Navigator.of(context).push(CupertinoPageRoute(builder: (_) {
               return AddNameGroup(users: widget.users, lstIndexAddUsers: lstIndexAddUsers);
             })),

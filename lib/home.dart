@@ -8,7 +8,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:flutter_snap_chat/chat.dart';
+import 'file:///E:/btl%20di%20dong/btl_didong/flutter_snap_chat/lib/screen_display/chat.dart';
 import 'package:flutter_snap_chat/const.dart';
 import 'package:flutter_snap_chat/router.dart';
 import 'package:flutter_snap_chat/settings.dart';

@@ -45,27 +45,45 @@ class MenuScreen extends StatelessWidget {
                     size: 150.0,
                     color: greyColor,
                   ),
-            Text(user.name.toString()),
-            MaterialButton(
-              onPressed: () {
-                FirebaseAuth.instance
-                    .authStateChanges()
-                    .listen((User user) {
-                  if (user == null) {
-                    print('User is currently signed out!');
-                  } else {
-                    FirebaseFirestore.instance.collection('users')
-                        .doc(user.uid).update({
-                      'status':"1",
-                    });
-                  }
-                });
-                Navigator.of(context).pushNamedAndRemoveUntil(AppRoutes.init, (route) => false);
-                context.read<AuthenticationBloc>().add(AuthenticationLogoutRequested());
-              },
-              child: Container(
-                width: double.infinity,
-                child: Text('Đăng xuất'),
+            SizedBox(
+              height: 5,
+            ),
+            Text(user.name.toString(),style: TextStyle(
+              fontSize: 17,
+              fontWeight: FontWeight.w600,
+            ),),
+            Card(
+              elevation: 0.1,
+              child: MaterialButton(
+                onPressed: () {
+                  FirebaseAuth.instance
+                      .authStateChanges()
+                      .listen((User user) {
+                    if (user == null) {
+                      print('User is currently signed out!');
+                    } else {
+                      FirebaseFirestore.instance.collection('users')
+                          .doc(user.uid).update({
+                        'status':"1",
+                      });
+                    }
+                  });
+                  Navigator.of(context).pushNamedAndRemoveUntil(AppRoutes.init, (route) => false);
+                  context.read<AuthenticationBloc>().add(AuthenticationLogoutRequested());
+                },
+                child: Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Container(
+
+                        child: Text('Đăng xuất'),
+                      ),
+                      Icon(Icons.exit_to_app),
+                    ],
+                  ),
+                ),
               ),
             ),
           ],

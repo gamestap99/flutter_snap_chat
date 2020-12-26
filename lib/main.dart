@@ -75,6 +75,18 @@ class _MyAppViewState extends State<MyAppView> with WidgetsBindingObserver {
   @override
   initState() {
     super.initState();
+    FirebaseAuth.instance
+        .authStateChanges()
+        .listen((User user) {
+      if (user == null) {
+        print('User is currently signed out!');
+      } else {
+        FirebaseFirestore.instance.collection('users')
+            .doc(user.uid).update({
+          'status':"0",
+        });
+      }
+    });
     WidgetsBinding.instance.addObserver(this);
   }
 

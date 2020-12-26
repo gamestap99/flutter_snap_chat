@@ -1,8 +1,11 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_snap_chat/const.dart';
 import 'package:flutter_snap_chat/containers/chat_container.dart';
+import 'package:flutter_snap_chat/containers/chat_group_container.dart';
+import 'package:flutter_snap_chat/models/room_model.dart';
 
 class ChatItem extends StatefulWidget {
   final String roomID;
@@ -12,6 +15,7 @@ class ChatItem extends StatefulWidget {
   final String roomImage;
   final String type;
   final String id;
+  final RoomModel roomModel;
 
   const ChatItem({
     Key key,
@@ -22,6 +26,7 @@ class ChatItem extends StatefulWidget {
     @required this.roomImage,
     @required this.type,
     @required this.id,
+    @required this.roomModel,
   }) : super(key: key);
 
   @override
@@ -43,7 +48,9 @@ class _ChatItemState extends State<ChatItem> {
     if (widget.type == "1") {
       widget.member.forEach((element) {
         if (element != widget.id) {
-          isLoading = true;
+          setState(() {
+            isLoading = true;
+          });
           FirebaseFirestore.instance.collection('users').doc(element).get().then((value) {
             if (value.exists) {
               setState(() {
@@ -69,7 +76,7 @@ class _ChatItemState extends State<ChatItem> {
               child: Row(
                 children: <Widget>[
                   Material(
-                    child: widget.roomImage != null
+                    child: widget.roomImage != null || widget.type == "1"
                         ? CachedNetworkImage(
                             placeholder: (context, url) => Container(
                               child: CircularProgressIndicator(
@@ -80,7 +87,7 @@ class _ChatItemState extends State<ChatItem> {
                               height: 50.0,
                               padding: EdgeInsets.all(15.0),
                             ),
-                            imageUrl: user["photoUrl"],
+                            imageUrl: widget.type == "0" ? widget.roomImage : peerAvatar,
                             width: 50.0,
                             height: 50.0,
                             fit: BoxFit.cover,
@@ -101,7 +108,7 @@ class _ChatItemState extends State<ChatItem> {
                           Container(
                             child: Text(
                               widget.type == "0" ? widget.name : user["nickname"],
-                              style: TextStyle(color: primaryColor),
+                              style: TextStyle(color: primaryColor, fontSize: 17, fontWeight: FontWeight.w800),
                             ),
                             alignment: Alignment.centerLeft,
                             margin: EdgeInsets.fromLTRB(10.0, 0.0, 0.0, 5.0),
@@ -109,7 +116,11 @@ class _ChatItemState extends State<ChatItem> {
                           Container(
                             child: Text(
                               widget.lastMessage,
-                              style: TextStyle(color: primaryColor),
+                              style: TextStyle(
+                                color: primaryColor,
+                                fontSize: 13,
+                                fontWeight: FontWeight.w400
+                              ),
                             ),
                             alignment: Alignment.centerLeft,
                             margin: EdgeInsets.fromLTRB(10.0, 0.0, 0.0, 0.0),
@@ -122,16 +133,24 @@ class _ChatItemState extends State<ChatItem> {
                 ],
               ),
               onPressed: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => ChatContainer(
-                              roomId: widget.roomID,
-                              member: widget.member,
-                              peerAvatar: peerAvatar,
-                              peerId: perId,
-                              perToken: user["pushToken"], peerName: user['nickname'],
-                            )));
+                if (widget.type == "1") {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => ChatContainer(
+                                roomId: widget.roomID,
+                                member: widget.member,
+                                peerAvatar: peerAvatar,
+                                peerId: perId,
+                                perToken: user["pushToken"],
+                                peerName: user['nickname'],
+                              )));
+                } else {
+                  Navigator.of(context).push(CupertinoPageRoute(
+                      builder: (_) => ChatGroupContainer(
+                            roomModel: widget.roomModel,
+                          )));
+                }
               },
               color: greyColor2,
               padding: EdgeInsets.fromLTRB(25.0, 10.0, 25.0, 10.0),

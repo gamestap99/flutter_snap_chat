@@ -91,7 +91,9 @@ class ApiFriendRepository implements FriendRepository {
 
   @override
   Stream<List<ContactModel>> friends(String uid) {
-    return FirebaseFirestore.instance.collection('contacts').where("status", isEqualTo: "0").snapshots().map((event) {
+    return FirebaseFirestore.instance.collection('contacts')
+        .where('receiverId',isEqualTo: uid)
+        .where("status", isEqualTo: "0").snapshots().map((event) {
       return event.docs.length > 0 ? List<ContactModel>.from(event.docs.map((e) => ContactModel.fromSnapShot(e)).toList()) : List<ContactModel>.from([]);
     });
   }

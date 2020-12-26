@@ -27,7 +27,9 @@ class _ProfileTestState extends State<ProfileTest> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    FirebaseFirestore.instance.collection('rooms').where('member', arrayContainsAny: [widget.uid, widget.peerUser.id]).get().then((value) {
+    FirebaseFirestore.instance.collection('rooms')
+        .where('member', arrayContainsAny: [widget.uid, widget.peerUser.id])
+        .where('type',isEqualTo: "1").get().then((value) {
           setState(() {
             if (value.docs.length > 0) {
               value.docs.forEach((element) {
