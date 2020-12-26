@@ -8,15 +8,13 @@ import 'package:flutter_snap_chat/containers/group_container.dart';
 import 'package:flutter_snap_chat/containers/init_container.dart';
 import 'package:flutter_snap_chat/containers/login_container.dart';
 import 'package:flutter_snap_chat/home.dart';
-import 'package:flutter_snap_chat/screen_display/sign_up_page.dart';
-import 'containers/containers.dart';
-import 'file:///E:/btl%20di%20dong/btl_didong/flutter_snap_chat/lib/screen_display/login.dart';
 import 'package:flutter_snap_chat/screen_display/add_group_display_screen.dart';
-import 'package:flutter_snap_chat/screen_display/room_display_screen.dart';
-import 'package:flutter_snap_chat/screen_display/contact_display_screen.dart';
-import 'package:flutter_snap_chat/screen_display/friend_display_screen.dart';
+import 'package:flutter_snap_chat/screen_display/login.dart';
 import 'package:flutter_snap_chat/screen_display/menu_screen.dart';
+import 'package:flutter_snap_chat/screen_display/sign_up_page.dart';
 import 'package:flutter_snap_chat/settings.dart';
+
+import 'containers/containers.dart';
 
 class AppRoutes {
   static const home = "/home";

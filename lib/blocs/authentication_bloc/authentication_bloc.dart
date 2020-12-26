@@ -5,10 +5,8 @@ import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_snap_chat/blocs/authentication_bloc/authentication_event.dart';
 import 'package:flutter_snap_chat/blocs/authentication_bloc/authentication_state.dart';
-import 'package:flutter_snap_chat/models/user_model.dart';
 import 'package:flutter_snap_chat/repositories/user_firebase.dart';
-import 'package:hive/hive.dart';
-import 'file:///E:/btl%20di%20dong/btl_didong/flutter_snap_chat/lib/repositories/user_repository.dart';
+import 'package:flutter_snap_chat/repositories/user_repository.dart';
 import 'package:meta/meta.dart';
 import 'package:pedantic/pedantic.dart';
 class AuthenticationBloc

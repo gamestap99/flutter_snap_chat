@@ -1,6 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_snap_chat/blocs/login_bloc/login_state.dart';
-import 'file:///E:/btl%20di%20dong/btl_didong/flutter_snap_chat/lib/repositories/user_repository.dart';
+import 'package:flutter_snap_chat/repositories/user_repository.dart';
 import 'package:flutter_snap_chat/validators/validators.dart';
 import 'package:formz/formz.dart';
 
