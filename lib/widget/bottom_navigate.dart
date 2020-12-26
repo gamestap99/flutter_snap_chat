@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_snap_chat/blocs/authentication_bloc/bloc.dart';
 
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_snap_chat/models/user_model.dart';
 class NavObject {
   String route;
   Icon navIcon;
@@ -16,21 +18,11 @@ class BottomNavigate extends StatefulWidget {
 
 class _BottomNavigateState extends State<BottomNavigate> {
   int _selectedIndex = 0;
-  SharedPreferences _prefs;
-
-  @override
-  Future<void> initState() {
-    // TODO: implement initState
-    super.initState();
-    getUser();
-  }
-
-  Future<void> getUser() async {
-    _prefs = await SharedPreferences.getInstance();
-  }
 
   @override
   Widget build(BuildContext context) {
+    String uid = context.select((AuthenticationBloc bloc) => bloc.state.user.id);
+
     List<NavObject> navs = [
       NavObject(
         route: "/chat_display",
@@ -39,8 +31,13 @@ class _BottomNavigateState extends State<BottomNavigate> {
       ),
       NavObject(
         route: "/friend_display",
-        navIcon: Icon(Icons.people_alt),
+        navIcon: Icon(Icons.perm_contact_cal),
         title: 'Bạn bè',
+      ),
+      NavObject(
+        route: "/group",
+        navIcon: Icon(Icons.people),
+        title: 'Group',
       ),
       NavObject(
         route: "/contact_display",
@@ -59,8 +56,8 @@ class _BottomNavigateState extends State<BottomNavigate> {
         _selectedIndex = index;
 
         Navigator.of(context).popAndPushNamed(navs[index].route, arguments: {
-          "userId": _prefs.get('id'),
-          "userImage":_prefs.get('photoUrl'),
+          "userId":  uid,
+
         });
       });
     }

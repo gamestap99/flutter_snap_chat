@@ -183,7 +183,7 @@ class _MessageInputState extends State<MessageInput> {
       setState(() {
         isLoading = true;
       });
-      uploadFile();
+      // uploadFile();
     }
   }
 
@@ -194,23 +194,23 @@ class _MessageInputState extends State<MessageInput> {
       isShowSticker = !isShowSticker;
     });
   }
-  Future uploadFile() async {
-    String fileName = DateTime.now().millisecondsSinceEpoch.toString();
-    StorageReference reference = FirebaseStorage.instance.ref().child(fileName);
-    StorageUploadTask uploadTask = reference.putFile(imageFile);
-    StorageTaskSnapshot storageTaskSnapshot = await uploadTask.onComplete;
-    storageTaskSnapshot.ref.getDownloadURL().then((downloadUrl) {
-      imageUrl = downloadUrl;
-      setState(() {
-        isLoading = false;
-        onSendMessage(imageUrl, 1);
-      });
-    }, onError: (err) {
-      setState(() {
-        isLoading = false;
-      });
-      Fluttertoast.showToast(msg: 'This file is not an image');
-    });
-  }
+  // Future uploadFile() async {
+  //   String fileName = DateTime.now().millisecondsSinceEpoch.toString();
+  //   StorageReference reference = FirebaseStorage.instance.ref().child(fileName);
+  //   StorageUploadTask uploadTask = reference.putFile(imageFile);
+  //   StorageTaskSnapshot storageTaskSnapshot = await uploadTask.onComplete;
+  //   storageTaskSnapshot.ref.getDownloadURL().then((downloadUrl) {
+  //     imageUrl = downloadUrl;
+  //     setState(() {
+  //       isLoading = false;
+  //       onSendMessage(imageUrl, 1);
+  //     });
+  //   }, onError: (err) {
+  //     setState(() {
+  //       isLoading = false;
+  //     });
+  //     Fluttertoast.showToast(msg: 'This file is not an image');
+  //   });
+  // }
 }
 
