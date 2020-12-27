@@ -9,6 +9,7 @@ class FriendContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     String uid = context.select((UserProviderCubit bloc) => bloc.state.userModel.id.toString());
+    print("friend uid" + uid);
     return BlocProvider(
       create: (_) => FriendBloc(friendRepository: ApiFriendRepository(), uid:uid),
       child: FriendDisplayScreen(),

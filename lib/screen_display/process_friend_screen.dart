@@ -24,17 +24,12 @@ class ProcessFriendScreen extends StatelessWidget {
                 child: CircularProgressIndicator(),
               );
             } else if (state is ProcessFriendLoaded) {
-              return state.contacts.length > 0 ? Column(
-                children: [
-                  Divider(),
-                  ListView.builder(
-                    shrinkWrap: true,
-                  itemCount: state.users.length,
-                  itemBuilder: (context,index){
-                    return buidItem(state.users[index],context,state.contacts[index].contactId);
-                  }),
-                ],
-              ) : Container(child: Center(child: Text("Không có lời mời nào"),),);
+              return state.contacts.length > 0 ? ListView.builder(
+                shrinkWrap: true,
+              itemCount: state.users.length,
+              itemBuilder: (context,index){
+                return buidItem(state.users[index],context,state.contacts[index].contactId);
+              }) : Container(child: Center(child: Text("Không có lời mời nào"),),);
             }
             return Container();
           },

@@ -10,9 +10,7 @@ abstract class FriendRepository {
 
   Future<UserModel> getUser(String uid);
 
-  Future<List<UserModel>> getUsers(
-    List<String> uids,
-  );
+  Future<List<UserModel>> getUsers(List<String> uids,);
 
   Stream<int> getCountAcpectFriend(String uid);
 
@@ -48,26 +46,26 @@ class ApiFriendRepository implements FriendRepository {
 
   @override
   Future<UserModel> getUser(String uid) async {
+    print("id: " + uid);
     DocumentSnapshot snapshot = await FirebaseFirestore.instance.collection('users').doc(uid).get();
+    print(snapshot.data().toString());
     return UserModel(
       id: snapshot.id,
       name: snapshot.data()['nickname'],
       photo: snapshot.data()['photoUrl'],
-      fcmToken: snapshot.data()['pushToken'],
+      fcmToken: snapshot.data().containsKey('pushToken') ? snapshot.data()['pushToken'] : null,
+      status: snapshot.data()['status'],
     );
   }
 
   @override
   Future<List<UserModel>> getUsers(List<String> uids) async {
     List<UserModel> users = [];
-    // await uids.forEach((element) async {
-    //   UserModel userModel = await getUser(element);
-    //   users.add(userModel);
-    // });
-    print("id: " + uids.length.toString());
+
     for (String id in uids) {
       print("id: " + id);
       UserModel userModel = await getUser(id);
+      print(userModel.toString());
       users.add(userModel);
     }
     return Future.value(users);
@@ -76,7 +74,7 @@ class ApiFriendRepository implements FriendRepository {
   @override
   Stream<int> getCountAcpectFriend(String uid) {
     print("uid: " + uid);
-    return FirebaseFirestore.instance.collection('contacts').where("receiveId", isEqualTo: uid)
+    return FirebaseFirestore.instance.collection('contacts').where("receiverId", isEqualTo: uid)
         .where("status", isEqualTo: "1").snapshots().map((event) {
       return event.docs.length;
     });
@@ -84,7 +82,7 @@ class ApiFriendRepository implements FriendRepository {
 
   @override
   Stream<List<ContactModel>> getAllApectContact(String uid) {
-    return FirebaseFirestore.instance.collection('contacts').where("receiveId", isEqualTo: uid).where("status", isEqualTo: "1").snapshots().map((event) {
+    return FirebaseFirestore.instance.collection('contacts').where("receiverId", isEqualTo: uid).where("status", isEqualTo: "1").snapshots().map((event) {
       return event.docs.length > 0 ? List<ContactModel>.from(event.docs.map((e) => ContactModel.fromSnapShot(e)).toList()) : List<ContactModel>.from([]);
     });
   }
@@ -92,7 +90,7 @@ class ApiFriendRepository implements FriendRepository {
   @override
   Stream<List<ContactModel>> friends(String uid) {
     return FirebaseFirestore.instance.collection('contacts')
-        .where('receiverId',isEqualTo: uid)
+        .where('merge', arrayContainsAny: [uid])
         .where("status", isEqualTo: "0").snapshots().map((event) {
       return event.docs.length > 0 ? List<ContactModel>.from(event.docs.map((e) => ContactModel.fromSnapShot(e)).toList()) : List<ContactModel>.from([]);
     });

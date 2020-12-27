@@ -40,6 +40,7 @@ class FriendBloc extends Bloc<FriendEvent, FriendState> {
   ) async* {
     try{
       if(event.contacts.length > 0 ){
+        print("data");
         List<String> users= _friendRepository.getIdFriends(event.contacts,uid);
         // final count =await _friendRepository.getCountAcpectFriend(uid);
         yield FriendLoaed(users);

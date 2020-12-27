@@ -29,14 +29,14 @@ class ProcessFriendBloc extends Bloc<ProcessFriendEvent,ProcessFriendState>{
               uids.add(element.senderId);
             });
             final users =await _friendRepository.getUsers(uids);
-            print("data user+++++++++++++" +users.length.toString());
+
             yield ProcessFriendLoaded(users: users,contacts: event.contacts);
           }else{
             yield ProcessFriendLoaded(users: [],contacts: event.contacts);
           }
         }
       }catch(ex){
-        yield ProcessFriendLoadFailure(event.toString());
+        yield ProcessFriendLoadFailure(ex.toString());
       }
   }
   @override

@@ -56,18 +56,22 @@ class MenuScreen extends StatelessWidget {
               elevation: 0.1,
               child: MaterialButton(
                 onPressed: () {
-                  FirebaseAuth.instance
-                      .authStateChanges()
-                      .listen((User user) {
-                    if (user == null) {
-                      print('User is currently signed out!');
-                    } else {
+                  // FirebaseAuth.instance
+                  //     .authStateChanges()
+                  //     .listen((User user) {
+                  //   if (user == null) {
+                  //     print('User is currently signed out!');
+                  //   } else {
+                  //     FirebaseFirestore.instance.collection('users')
+                  //         .doc(user.uid).update({
+                  //       'status':"1",
+                  //     });
+                  //   }
+                  // });
                       FirebaseFirestore.instance.collection('users')
-                          .doc(user.uid).update({
+                          .doc(user.id).update({
                         'status':"1",
                       });
-                    }
-                  });
                   Navigator.of(context).pushNamedAndRemoveUntil(AppRoutes.init, (route) => false);
                   context.read<AuthenticationBloc>().add(AuthenticationLogoutRequested());
                 },

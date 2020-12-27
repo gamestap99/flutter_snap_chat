@@ -17,10 +17,7 @@ class ChatGroupContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     String uid = context.select((AuthenticationBloc bloc) => bloc.state.user.id.toString());
-    print("chat group uid" + uid);
     String userName = context.select((UserProviderCubit cubit) => cubit.state.userModel.name.toString());
-    print("chat group userName" + userName);
-    print("rooom model" +roomModel.id.toString());
     Map<String, dynamic> argument = ModalRoute.of(context).settings.arguments;
     return BlocProvider(
       create: (_) => ChatGroupCubit(

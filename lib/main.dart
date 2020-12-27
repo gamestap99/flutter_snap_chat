@@ -75,18 +75,7 @@ class _MyAppViewState extends State<MyAppView> with WidgetsBindingObserver {
   @override
   initState() {
     super.initState();
-    FirebaseAuth.instance
-        .authStateChanges()
-        .listen((User user) {
-      if (user == null) {
-        print('User is currently signed out!');
-      } else {
-        FirebaseFirestore.instance.collection('users')
-            .doc(user.uid).update({
-          'status':"0",
-        });
-      }
-    });
+
     WidgetsBinding.instance.addObserver(this);
   }
 
@@ -100,46 +89,64 @@ class _MyAppViewState extends State<MyAppView> with WidgetsBindingObserver {
   void didChangeAppLifecycleState(AppLifecycleState state) {
     switch (state) {
       case AppLifecycleState.resumed:
-        FirebaseAuth.instance.authStateChanges().listen((User user) {
-          if (user == null) {
-            print('User is currently signed out!');
-          } else {
-            FirebaseFirestore.instance
-                .collection('users')
-                .doc(user.uid)
-                .update({
-              'status': "0",
-            });
-          }
+        FirebaseFirestore.instance
+            .collection('users')
+            .doc(context.read<AuthenticationBloc>().state.user.id)
+            .update({
+          'status': "0",
         });
+        // FirebaseAuth.instance.authStateChanges().listen((User user) {
+        //   if (user == null) {
+        //     print('User is currently signed out!');
+        //   } else {
+        //     FirebaseFirestore.instance
+        //         .collection('users')
+        //         .doc(user.uid)
+        //         .update({
+        //       'status': "0",
+        //     });
+        //   }
+        // });
         break;
       case AppLifecycleState.inactive:
-        FirebaseAuth.instance.authStateChanges().listen((User user) {
-          if (user == null) {
-            print('User is currently signed out!');
-          } else {
-            FirebaseFirestore.instance
-                .collection('users')
-                .doc(user.uid)
-                .update({
-              'status': "1",
-            });
-          }
-        });
+          FirebaseFirestore.instance
+              .collection('users')
+              .doc(context.read<AuthenticationBloc>().state.user.id)
+              .update({
+            'status': "1",
+          });
+        // FirebaseAuth.instance.authStateChanges().listen((User user) {
+        //   if (user == null) {
+        //     print('User is currently signed out!');
+        //   } else {
+        //     FirebaseFirestore.instance
+        //         .collection('users')
+        //         .doc(user.uid)
+        //         .update({
+        //       'status': "1",
+        //     });
+        //   }
+        // });
         break;
       case AppLifecycleState.paused:
-        FirebaseAuth.instance.authStateChanges().listen((User user) {
-          if (user == null) {
-            print('User is currently signed out!');
-          } else {
-            FirebaseFirestore.instance
-                .collection('users')
-                .doc(user.uid)
-                .update({
-              'status': "1",
-            });
-          }
+        FirebaseFirestore.instance
+            .collection('users')
+            .doc(context.read<AuthenticationBloc>().state.user.id)
+            .update({
+          'status': "1",
         });
+        // FirebaseAuth.instance.authStateChanges().listen((User user) {
+        //   if (user == null) {
+        //     print('User is currently signed out!');
+        //   } else {
+        //     FirebaseFirestore.instance
+        //         .collection('users')
+        //         .doc(user.uid)
+        //         .update({
+        //       'status': "1",
+        //     });
+        //   }
+        // });
         break;
       case AppLifecycleState.detached:
         print("app in detached");

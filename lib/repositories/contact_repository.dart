@@ -46,6 +46,7 @@ class ApiContactRepository implements ContactRepository {
         'senderId': uId,
         'receiverId': peerId,
         'status': status,
+        'merge':[uId,peerId],
         'created_at': DateTime.now().toString(),
       });
       return reference.id;

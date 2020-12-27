@@ -120,7 +120,7 @@ class SettingsScreenState extends State<SettingsScreen> {
       });
 
       Fluttertoast.showToast(msg: "Update success");
-      Navigator.of(context).pushNamedAndRemoveUntil(AppRoutes.init, (route) => false,arguments: {
+      Navigator.of(context).pushNamedAndRemoveUntil(AppRoutes.control, (route) => false,arguments: {
         "userId":uid,
       });
     }).catchError((err) {
