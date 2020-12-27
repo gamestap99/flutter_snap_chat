@@ -18,7 +18,7 @@ class ControlScreen extends StatefulWidget {
 class _ControlScreenState extends State<ControlScreen> {
 
 
-  int bottomSelectedIndex = 0;
+  int _bottomSelectedIndex = 0;
 
   PageController pageController = PageController(
     initialPage: 0,
@@ -40,7 +40,7 @@ class _ControlScreenState extends State<ControlScreen> {
 
   void bottomTapped(int index) {
     setState(() {
-      bottomSelectedIndex = index;
+      _bottomSelectedIndex = index;
       pageController.animateToPage(index, duration: Duration(milliseconds: 500), curve: Curves.ease);
     });
   }
@@ -160,7 +160,7 @@ class _ControlScreenState extends State<ControlScreen> {
           }),
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
-        currentIndex: bottomSelectedIndex,
+        currentIndex: _bottomSelectedIndex,
         backgroundColor: Colors.white,
         onTap: (index) => bottomTapped(index),
         items: items,

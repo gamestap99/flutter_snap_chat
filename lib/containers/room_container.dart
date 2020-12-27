@@ -15,8 +15,8 @@ class RoomContainer extends StatelessWidget {
     Map<String, dynamic> argument = ModalRoute.of(context).settings.arguments;
 
     return BlocProvider(
-      create: (_) => RoomBloc(ApiRoomRepository(), argument['userId']),
-      child: RoomDisplayScreen(uid: argument['userId'],),
+      create: (_) => RoomBloc(ApiRoomRepository(), uid),
+      child: RoomDisplayScreen(uid: uid,),
     );
   }
 }

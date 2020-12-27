@@ -95,11 +95,7 @@ class AuthenticationRepository {
       await _firebaseAuth.signInWithEmailAndPassword(
         email: email,
         password: password,
-      ).then((value) {
-        FirebaseFirestore.instance.collection('users').doc(value.user.uid).get().then((value) {
-          // writeDatabase(value);
-        });
-      });
+      );
     } on Exception {
       throw LogInWithEmailAndPasswordFailure();
     }

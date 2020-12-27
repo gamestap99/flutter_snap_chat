@@ -1,7 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_snap_chat/blocs/authentication_bloc/authentication_bloc.dart';
 import 'package:flutter_snap_chat/blocs/login_bloc/bloc.dart';
+import 'package:flutter_snap_chat/blocs/user_provider_bloc/user_provider_cubit.dart';
 import 'package:flutter_snap_chat/router.dart';
 import 'package:flutter_snap_chat/screen_display/sign_up_page.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -24,6 +26,7 @@ class LoginScreen extends StatelessWidget {
               );
           }
           else if(state.status.isSubmissionSuccess){
+            context.read<UserProviderCubit>().getUser(context.read<AuthenticationBloc>().state.user.id);
             Navigator.of(context).pushNamedAndRemoveUntil(AppRoutes.control, (route) => false);
           }
         },
