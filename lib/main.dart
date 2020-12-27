@@ -87,6 +87,7 @@ class _MyAppViewState extends State<MyAppView> with WidgetsBindingObserver {
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
+    if(context.read<AuthenticationBloc>().state.user.id.length > 0){
     switch (state) {
       case AppLifecycleState.resumed:
         FirebaseFirestore.instance
@@ -151,7 +152,7 @@ class _MyAppViewState extends State<MyAppView> with WidgetsBindingObserver {
       case AppLifecycleState.detached:
         print("app in detached");
         break;
-    }
+    }}
   }
 
   @override
