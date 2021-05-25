@@ -1,6 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_snap_chat/const.dart';
+import 'package:flutter_snap_chat/constant/app_color.dart';
 import 'package:flutter_snap_chat/models/user_model.dart';
 
 class DisplayUser extends StatefulWidget {
@@ -19,7 +19,7 @@ class _DisplayUserState extends State<DisplayUser> {
       child: Row(
         children: <Widget>[
           Material(
-            child: widget.userModel.photo != null
+            child: widget.userModel.avatar != null
                 ? CachedNetworkImage(
                     placeholder: (context, url) => Container(
                       child: CircularProgressIndicator(
@@ -30,7 +30,7 @@ class _DisplayUserState extends State<DisplayUser> {
                       height: 50.0,
                       padding: EdgeInsets.all(15.0),
                     ),
-                    imageUrl: widget.userModel.photo,
+                    imageUrl: widget.userModel.avatar,
                     width: 50.0,
                     height: 50.0,
                     fit: BoxFit.cover,

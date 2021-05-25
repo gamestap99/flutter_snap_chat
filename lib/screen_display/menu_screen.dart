@@ -1,13 +1,13 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_snap_chat/blocs/authentication_bloc/bloc.dart';
 import 'package:flutter_snap_chat/blocs/user_provider_bloc/user_provider_cubit.dart';
-import 'package:flutter_snap_chat/const.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_snap_chat/constant/app_color.dart';
 import 'package:flutter_snap_chat/router.dart';
-
+import 'package:flutter_snap_chat/screen_display/settings.dart';
 
 class MenuScreen extends StatelessWidget {
   @override
@@ -15,12 +15,15 @@ class MenuScreen extends StatelessWidget {
     final user = context.select((FriendProviderCubit bloc) => bloc.state.userModel);
     return Scaffold(
       appBar: AppBar(
-        title: Text("Tôi"),
+        title: Text(
+          "Tôi",
+          style: TextStyle(color: primaryColor, fontWeight: FontWeight.bold),
+        ),
       ),
       body: Center(
         child: Column(
           children: [
-            user.photo != null
+            user.avatar != null
                 ? Material(
                     child: CachedNetworkImage(
                       placeholder: (context, url) => Container(
@@ -32,7 +35,7 @@ class MenuScreen extends StatelessWidget {
                         height: 150.0,
                         padding: EdgeInsets.all(20.0),
                       ),
-                      imageUrl: user.photo,
+                      imageUrl: user.avatar,
                       width: 150.0,
                       height: 150.0,
                       fit: BoxFit.cover,
@@ -48,30 +51,42 @@ class MenuScreen extends StatelessWidget {
             SizedBox(
               height: 5,
             ),
-            Text(user.name.toString(),style: TextStyle(
-              fontSize: 17,
-              fontWeight: FontWeight.w600,
-            ),),
+            Text(
+              user.name.toString(),
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
             Card(
               elevation: 0.1,
               child: MaterialButton(
                 onPressed: () {
-                  // FirebaseAuth.instance
-                  //     .authStateChanges()
-                  //     .listen((User user) {
-                  //   if (user == null) {
-                  //     print('User is currently signed out!');
-                  //   } else {
-                  //     FirebaseFirestore.instance.collection('users')
-                  //         .doc(user.uid).update({
-                  //       'status':"1",
-                  //     });
-                  //   }
-                  // });
-                      FirebaseFirestore.instance.collection('users')
-                          .doc(user.id).update({
-                        'status':"1",
-                      });
+                  Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
+                    return ChatSettings();
+                  }));
+                },
+                child: Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Container(
+                        child: Text('Thiết lập thông tin'),
+                      ),
+                      Icon(Icons.settings),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            Card(
+              elevation: 0.1,
+              child: MaterialButton(
+                onPressed: () {
+                  FirebaseFirestore.instance.collection('users').doc(user.id).update({
+                    'status': "1",
+                  });
                   Navigator.of(context).pushNamedAndRemoveUntil(AppRoutes.init, (route) => false);
                   context.read<AuthenticationBloc>().add(AuthenticationLogoutRequested());
                 },
@@ -81,7 +96,6 @@ class MenuScreen extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Container(
-
                         child: Text('Đăng xuất'),
                       ),
                       Icon(Icons.exit_to_app),

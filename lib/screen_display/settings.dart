@@ -5,11 +5,11 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_snap_chat/blocs/authentication_bloc/bloc.dart';
-import 'package:flutter_snap_chat/const.dart';
+import 'package:flutter_snap_chat/constant/app_color.dart';
 import 'package:flutter_snap_chat/router.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -22,7 +22,6 @@ class ChatSettings extends StatelessWidget {
           'Thông tin hiển thị',
           style: TextStyle(color: primaryColor, fontWeight: FontWeight.bold),
         ),
-        centerTitle: true,
       ),
       body: SettingsScreen(),
     );
@@ -40,7 +39,6 @@ class SettingsScreenState extends State<SettingsScreen> {
 
   SharedPreferences prefs;
 
-
   String nickname = '';
   String aboutMe = '';
   String photoUrl = '';
@@ -54,9 +52,7 @@ class SettingsScreenState extends State<SettingsScreen> {
   @override
   void initState() {
     super.initState();
-
   }
-
 
   Future getImage() async {
     ImagePicker imagePicker = ImagePicker();
@@ -84,12 +80,8 @@ class SettingsScreenState extends State<SettingsScreen> {
     await ref.putFile(avatarImageFile);
     // uploadTask.then(() => )
     // ref.getDownloadURL();
-    photoUrl =await ref.getDownloadURL();
-    FirebaseFirestore.instance.collection('users').doc(uid).update({
-      'nickname': nickname,
-      'aboutMe': aboutMe,
-      'photoUrl': photoUrl
-    }).then((data) async {
+    photoUrl = await ref.getDownloadURL();
+    FirebaseFirestore.instance.collection('users').doc(uid).update({'nickname': nickname, 'aboutMe': aboutMe, 'photoUrl': photoUrl}).then((data) async {
       setState(() {
         isLoading = false;
       });
@@ -98,7 +90,7 @@ class SettingsScreenState extends State<SettingsScreen> {
       setState(() {
         isLoading = false;
       });
-      print("error:"+ err.toString());
+      print("error:" + err.toString());
       Fluttertoast.showToast(msg: err.toString());
     });
   }
@@ -109,19 +101,15 @@ class SettingsScreenState extends State<SettingsScreen> {
     FirebaseFirestore.instance.collection('users').doc(uid).update({
       'nickname': nickname,
       'aboutMe': aboutMe,
-      'photoUrl': photoUrl == null  || photoUrl.length ==0 ?
-        "https://firebasestorage.googleapis.com/v0/b/snapchat-ac0cf.appspot.com/o/no_avatar.jpg?alt=media&token=55c6ff85-2ed4-4f74-b067-8e08a15b43bc"
-          :photoUrl,
+      'photoUrl': photoUrl == null || photoUrl.length == 0 ? "https://firebasestorage.googleapis.com/v0/b/snapchat-ac0cf.appspot.com/o/no_avatar.jpg?alt=media&token=55c6ff85-2ed4-4f74-b067-8e08a15b43bc" : photoUrl,
     }).then((data) async {
-
-
       setState(() {
         isLoading = false;
       });
 
       Fluttertoast.showToast(msg: "Update success");
-      Navigator.of(context).pushNamedAndRemoveUntil(AppRoutes.control, (route) => false,arguments: {
-        "userId":uid,
+      Navigator.of(context).pushNamedAndRemoveUntil(AppRoutes.control, (route) => false, arguments: {
+        "userId": uid,
       });
     }).catchError((err) {
       setState(() {
@@ -134,7 +122,7 @@ class SettingsScreenState extends State<SettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
-     uid = context.select((AuthenticationBloc bloc) => bloc.state.user.id.toString());
+    uid = context.select((AuthenticationBloc bloc) => bloc.state.user.id.toString());
     return Stack(
       children: <Widget>[
         SingleChildScrollView(
@@ -153,9 +141,7 @@ class SettingsScreenState extends State<SettingsScreen> {
                                       placeholder: (context, url) => Container(
                                         child: CircularProgressIndicator(
                                           strokeWidth: 2.0,
-                                          valueColor:
-                                              AlwaysStoppedAnimation<Color>(
-                                                  themeColor),
+                                          valueColor: AlwaysStoppedAnimation<Color>(themeColor),
                                         ),
                                         width: 90.0,
                                         height: 90.0,
@@ -166,8 +152,7 @@ class SettingsScreenState extends State<SettingsScreen> {
                                       height: 90.0,
                                       fit: BoxFit.cover,
                                     ),
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(45.0)),
+                                    borderRadius: BorderRadius.all(Radius.circular(45.0)),
                                     clipBehavior: Clip.hardEdge,
                                   )
                                 : Icon(
@@ -182,8 +167,7 @@ class SettingsScreenState extends State<SettingsScreen> {
                                   height: 90.0,
                                   fit: BoxFit.cover,
                                 ),
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(45.0)),
+                                borderRadius: BorderRadius.all(Radius.circular(45.0)),
                                 clipBehavior: Clip.hardEdge,
                               ),
                         IconButton(
@@ -210,21 +194,17 @@ class SettingsScreenState extends State<SettingsScreen> {
                     // Username
                     Container(
                       child: Text(
-                        'Nickname',
-                        style: TextStyle(
-                            fontStyle: FontStyle.italic,
-                            fontWeight: FontWeight.bold,
-                            color: primaryColor),
+                        'Tên hiển thị',
+                        style: TextStyle(fontStyle: FontStyle.italic, fontWeight: FontWeight.bold, color: primaryColor),
                       ),
                       margin: EdgeInsets.only(left: 10.0, bottom: 5.0, top: 10.0),
                     ),
                     Container(
                       child: Theme(
-                        data: Theme.of(context)
-                            .copyWith(primaryColor: primaryColor),
+                        data: Theme.of(context).copyWith(primaryColor: primaryColor),
                         child: TextField(
                           decoration: InputDecoration(
-                            hintText: 'Sweetie',
+                            hintText: 'Nam Dv',
                             contentPadding: EdgeInsets.all(5.0),
                             hintStyle: TextStyle(color: greyColor),
                           ),
@@ -241,21 +221,17 @@ class SettingsScreenState extends State<SettingsScreen> {
                     // About me
                     Container(
                       child: Text(
-                        'About me',
-                        style: TextStyle(
-                            fontStyle: FontStyle.italic,
-                            fontWeight: FontWeight.bold,
-                            color: primaryColor),
+                        'Giới thiệu bản thân',
+                        style: TextStyle(fontStyle: FontStyle.italic, fontWeight: FontWeight.bold, color: primaryColor),
                       ),
                       margin: EdgeInsets.only(left: 10.0, top: 30.0, bottom: 5.0),
                     ),
                     Container(
                       child: Theme(
-                        data: Theme.of(context)
-                            .copyWith(primaryColor: primaryColor),
+                        data: Theme.of(context).copyWith(primaryColor: primaryColor),
                         child: TextField(
                           decoration: InputDecoration(
-                            hintText: 'Fun, like travel and play PES...',
+                            hintText: 'Tôi là dev mobile, sử dụng Flutter',
                             contentPadding: EdgeInsets.all(5.0),
                             hintStyle: TextStyle(color: greyColor),
                           ),
@@ -275,6 +251,9 @@ class SettingsScreenState extends State<SettingsScreen> {
                 // Button
                 Container(
                   child: FlatButton(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(5)),
+                    ),
                     onPressed: handleUpdateData,
                     child: Text(
                       'Xác nhận',
@@ -299,8 +278,7 @@ class SettingsScreenState extends State<SettingsScreen> {
           child: isLoading
               ? Container(
                   child: Center(
-                    child: CircularProgressIndicator(
-                        valueColor: AlwaysStoppedAnimation<Color>(themeColor)),
+                    child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(themeColor)),
                   ),
                   color: Colors.white.withOpacity(0.8),
                 )

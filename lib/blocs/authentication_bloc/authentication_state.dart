@@ -20,6 +20,7 @@ class AuthenticationState extends Equatable {
   final AuthenticationStatus status;
   final UserFirebase user;
 
+
   @override
   List<Object> get props => [status, user];
 }

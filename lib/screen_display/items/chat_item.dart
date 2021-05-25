@@ -2,7 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_snap_chat/const.dart';
+import 'package:flutter_snap_chat/constant/app_color.dart';
 import 'package:flutter_snap_chat/containers/chat_container.dart';
 import 'package:flutter_snap_chat/containers/chat_group_container.dart';
 import 'package:flutter_snap_chat/models/room_model.dart';
@@ -64,7 +64,7 @@ class _ChatItemState extends State<ChatItem> {
             if (value.exists) {
               setState(() {
                 perId = value.id;
-                peerAvatar = value["photoUrl"];
+                peerAvatar = value["avatar"];
                 print(value.data());
                 user = value.data();
                 _receiver = UserModel.fromSnapShot(value);

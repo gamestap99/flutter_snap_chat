@@ -9,9 +9,11 @@ class FriendProviderCubit extends Cubit<UserProviderState> {
   Future<void> getUser(String uid) async {
     try {
       print("uidr:   " + uid);
-      emit(state.copyWith(
-        status: UserProviderStatus.loading,
-      ));
+      emit(
+        state.copyWith(
+          status: UserProviderStatus.loading,
+        ),
+      );
       final data = await _friendRepository.getUser(uid);
       emit(state.copyWith(
         user: data,
@@ -19,8 +21,8 @@ class FriendProviderCubit extends Cubit<UserProviderState> {
       ));
       print("userprovider:   ");
     } catch (ex) {
-      print("ex:" +ex.toString());
-          throw Exception('Get user thất bại');
+      print("ex:" + ex.toString());
+      throw Exception('Get user thất bại');
     }
   }
 }

@@ -30,7 +30,7 @@ class ApiContactRepository implements ContactRepository {
         (e) => UserModel(
           id: e.id,
           name: e.data()['nickname'],
-          photo: e.data()['photoUrl'],
+          avatar: e.data()['photoUrl'],
           status: e.data()['status'],
           fcmToken: e.data()['pushToken'],
         ),
@@ -112,7 +112,7 @@ class ApiContactRepository implements ContactRepository {
         (e) => UserModel(
           id: e.id,
           name: e.data()['nickname'],
-          photo: e.data()['photoUrl'],
+          avatar: e.data()['photoUrl'],
           fcmToken: e.data()['pushToken'],
           status: e.data()['status'],
         ),

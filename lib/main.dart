@@ -7,7 +7,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_snap_chat/blocs/authentication_bloc/bloc.dart';
 import 'package:flutter_snap_chat/blocs/process_contact_bloc/process_contact_bloc.dart';
 import 'package:flutter_snap_chat/blocs/user_provider_bloc/user_provider_cubit.dart';
-import 'package:flutter_snap_chat/config/app.dart';
+import 'package:flutter_snap_chat/constant/app_color.dart';
 import 'package:flutter_snap_chat/database/user.g.dart';
 import 'package:flutter_snap_chat/repositories/contact_repository.dart';
 import 'package:flutter_snap_chat/repositories/friend_repository.dart';
@@ -16,17 +16,13 @@ import 'package:flutter_snap_chat/router.dart';
 import 'package:flutter_snap_chat/simple_bloc_observer.dart';
 import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart' as path_provider;
-import 'package:firebase_auth/firebase_auth.dart';
-
-import 'const.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   EquatableConfig.stringify = kDebugMode;
   Bloc.observer = SimpleBlocObserver();
-  final appDocumentDirectory =
-      await path_provider.getApplicationDocumentsDirectory();
+  final appDocumentDirectory = await path_provider.getApplicationDocumentsDirectory();
   Hive.init(appDocumentDirectory.path);
   Hive.registerAdapter(UserAdapter());
   runApp(MyApp(
@@ -48,8 +44,7 @@ class MyApp extends StatelessWidget {
         child: MultiBlocProvider(
           providers: [
             BlocProvider(
-              create: (_) => AuthenticationBloc(
-                  authenticationRepository: authenticationRepository),
+              create: (_) => AuthenticationBloc(authenticationRepository: authenticationRepository),
             ),
             BlocProvider(
               create: (_) => ProcessContactBloc(ApiContactRepository()),
@@ -93,72 +88,64 @@ class _MyAppViewState extends State<MyAppView> with WidgetsBindingObserver {
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if(context.read<AuthenticationBloc>().state.user.id.length > 0){
-    switch (state) {
-      case AppLifecycleState.resumed:
-        FirebaseFirestore.instance
-            .collection('users')
-            .doc(context.read<AuthenticationBloc>().state.user.id)
-            .update({
-          'status': "0",
-        });
-        // FirebaseAuth.instance.authStateChanges().listen((User user) {
-        //   if (user == null) {
-        //     print('User is currently signed out!');
-        //   } else {
-        //     FirebaseFirestore.instance
-        //         .collection('users')
-        //         .doc(user.uid)
-        //         .update({
-        //       'status': "0",
-        //     });
-        //   }
-        // });
-        break;
-      case AppLifecycleState.inactive:
-          FirebaseFirestore.instance
-              .collection('users')
-              .doc(context.read<AuthenticationBloc>().state.user.id)
-              .update({
+    if (context.read<AuthenticationBloc>().state.user.id.length > 0) {
+      switch (state) {
+        case AppLifecycleState.resumed:
+          FirebaseFirestore.instance.collection('users').doc(context.read<AuthenticationBloc>().state.user.id).update({
+            'status': "0",
+          });
+          // FirebaseAuth.instance.authStateChanges().listen((User user) {
+          //   if (user == null) {
+          //     print('User is currently signed out!');
+          //   } else {
+          //     FirebaseFirestore.instance
+          //         .collection('users')
+          //         .doc(user.uid)
+          //         .update({
+          //       'status': "0",
+          //     });
+          //   }
+          // });
+          break;
+        case AppLifecycleState.inactive:
+          FirebaseFirestore.instance.collection('users').doc(context.read<AuthenticationBloc>().state.user.id).update({
             'status': "1",
           });
-        // FirebaseAuth.instance.authStateChanges().listen((User user) {
-        //   if (user == null) {
-        //     print('User is currently signed out!');
-        //   } else {
-        //     FirebaseFirestore.instance
-        //         .collection('users')
-        //         .doc(user.uid)
-        //         .update({
-        //       'status': "1",
-        //     });
-        //   }
-        // });
-        break;
-      case AppLifecycleState.paused:
-        FirebaseFirestore.instance
-            .collection('users')
-            .doc(context.read<AuthenticationBloc>().state.user.id)
-            .update({
-          'status': "1",
-        });
-        // FirebaseAuth.instance.authStateChanges().listen((User user) {
-        //   if (user == null) {
-        //     print('User is currently signed out!');
-        //   } else {
-        //     FirebaseFirestore.instance
-        //         .collection('users')
-        //         .doc(user.uid)
-        //         .update({
-        //       'status': "1",
-        //     });
-        //   }
-        // });
-        break;
-      case AppLifecycleState.detached:
-        print("app in detached");
-        break;
-    }}
+          // FirebaseAuth.instance.authStateChanges().listen((User user) {
+          //   if (user == null) {
+          //     print('User is currently signed out!');
+          //   } else {
+          //     FirebaseFirestore.instance
+          //         .collection('users')
+          //         .doc(user.uid)
+          //         .update({
+          //       'status': "1",
+          //     });
+          //   }
+          // });
+          break;
+        case AppLifecycleState.paused:
+          FirebaseFirestore.instance.collection('users').doc(context.read<AuthenticationBloc>().state.user.id).update({
+            'status': "1",
+          });
+          // FirebaseAuth.instance.authStateChanges().listen((User user) {
+          //   if (user == null) {
+          //     print('User is currently signed out!');
+          //   } else {
+          //     FirebaseFirestore.instance
+          //         .collection('users')
+          //         .doc(user.uid)
+          //         .update({
+          //       'status': "1",
+          //     });
+          //   }
+          // });
+          break;
+        case AppLifecycleState.detached:
+          print("app in detached");
+          break;
+      }
+    }
   }
 
   @override
@@ -170,8 +157,7 @@ class _MyAppViewState extends State<MyAppView> with WidgetsBindingObserver {
         primaryColor: themeColor,
       ),
       debugShowCheckedModeBanner: false,
-      onGenerateRoute: (RouteSettings settings) =>
-          AppRoutes.getRoutes(settings),
+      onGenerateRoute: (RouteSettings settings) => AppRoutes.getRoutes(settings),
       initialRoute: AppRoutes.init,
     );
   }

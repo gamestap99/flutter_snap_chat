@@ -1,7 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_snap_chat/const.dart';
+import 'package:flutter_snap_chat/constant/app_color.dart';
 import 'package:flutter_snap_chat/models/user_model.dart';
 import 'package:flutter_snap_chat/screen_display/items/add_name_group.dart';
 
@@ -91,7 +91,7 @@ class _AddGroupDisplayScreenState extends State<AddGroupDisplayScreen> {
         child: Row(
           children: <Widget>[
             Material(
-              child: userModel.photo != null
+              child: userModel.avatar != null
                   ? CachedNetworkImage(
                 placeholder: (context, url) => Container(
                   child: CircularProgressIndicator(
@@ -102,7 +102,7 @@ class _AddGroupDisplayScreenState extends State<AddGroupDisplayScreen> {
                   height: 50.0,
                   padding: EdgeInsets.all(15.0),
                 ),
-                imageUrl: userModel.photo,
+                imageUrl: userModel.avatar,
                 width: 50.0,
                 height: 50.0,
                 fit: BoxFit.cover,
@@ -156,7 +156,7 @@ class _AddGroupDisplayScreenState extends State<AddGroupDisplayScreen> {
                   height: 5,
                 ),
                 Material(
-                  child: userModel.photo != null
+                  child: userModel.avatar != null
                       ? CachedNetworkImage(
                     placeholder: (context, url) => Container(
                       child: CircularProgressIndicator(
@@ -167,7 +167,7 @@ class _AddGroupDisplayScreenState extends State<AddGroupDisplayScreen> {
                       height: 50.0,
                       padding: EdgeInsets.all(15.0),
                     ),
-                    imageUrl: userModel.photo,
+                    imageUrl: userModel.avatar,
                     width: 50.0,
                     height: 50.0,
                     fit: BoxFit.cover,

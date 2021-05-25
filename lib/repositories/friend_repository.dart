@@ -10,7 +10,9 @@ abstract class FriendRepository {
 
   Future<UserModel> getUser(String uid);
 
-  Future<List<UserModel>> getUsers(List<String> uids,);
+  Future<List<UserModel>> getUsers(
+    List<String> uids,
+  );
 
   Stream<int> getCountAcpectFriend(String uid);
 
@@ -46,15 +48,15 @@ class ApiFriendRepository implements FriendRepository {
 
   @override
   Future<UserModel> getUser(String uid) async {
-    print("id: " + uid);
     DocumentSnapshot snapshot = await FirebaseFirestore.instance.collection('users').doc(uid).get();
-    print(snapshot.data().toString());
+
     return UserModel(
       id: snapshot.id,
       name: snapshot.data()['nickname'],
-      photo: snapshot.data()['photoUrl'],
+      avatar: snapshot.data()['avatar'],
       fcmToken: snapshot.data().containsKey('pushToken') ? snapshot.data()['pushToken'] : null,
       status: snapshot.data()['status'],
+      background: snapshot.data()['background'],
     );
   }
 
@@ -74,8 +76,7 @@ class ApiFriendRepository implements FriendRepository {
   @override
   Stream<int> getCountAcpectFriend(String uid) {
     print("uid: " + uid);
-    return FirebaseFirestore.instance.collection('contacts').where("receiverId", isEqualTo: uid)
-        .where("status", isEqualTo: "1").snapshots().map((event) {
+    return FirebaseFirestore.instance.collection('contacts').where("receiverId", isEqualTo: uid).where("status", isEqualTo: "1").snapshots().map((event) {
       return event.docs.length;
     });
   }
@@ -89,10 +90,8 @@ class ApiFriendRepository implements FriendRepository {
 
   @override
   Stream<List<ContactModel>> friends(String uid) {
-    return FirebaseFirestore.instance.collection('contacts')
-        .where('merge', arrayContainsAny: [uid])
-        .where("status", isEqualTo: "0").snapshots().map((event) {
-      return event.docs.length > 0 ? List<ContactModel>.from(event.docs.map((e) => ContactModel.fromSnapShot(e)).toList()) : List<ContactModel>.from([]);
-    });
+    return FirebaseFirestore.instance.collection('contacts').where('merge', arrayContainsAny: [uid]).where("status", isEqualTo: "0").snapshots().map((event) {
+          return event.docs.length > 0 ? List<ContactModel>.from(event.docs.map((e) => ContactModel.fromSnapShot(e)).toList()) : List<ContactModel>.from([]);
+        });
   }
 }

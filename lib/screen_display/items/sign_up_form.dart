@@ -2,7 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_snap_chat/blocs/sign_up_bloc/sign_up_cubit.dart';
-import 'package:flutter_snap_chat/settings.dart';
+import 'package:flutter_snap_chat/router.dart';
+import 'package:flutter_snap_chat/screen_display/settings.dart';
 import 'package:formz/formz.dart';
 
 class SignUpForm extends StatelessWidget {
@@ -16,29 +17,57 @@ class SignUpForm extends StatelessWidget {
             ..showSnackBar(
               const SnackBar(content: Text('Sign Up Failure')),
             );
-        }else if(state.status.isSubmissionSuccess){
-          Navigator.of(context).push(
-            CupertinoPageRoute(builder: (context){
-              return ChatSettings();
-            })
+        } else if (state.status.isSubmissionSuccess) {
+          // Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
+          //   return ChatSettings();
+          // }));
+
+          Navigator.of(context).pushNamedAndRemoveUntil(
+            AppRoutes.init,
+            (route) => false,
           );
         }
       },
       child: Align(
         alignment: const Alignment(0, -1 / 3),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            _EmailInput(),
-            const SizedBox(height: 8.0),
-            _PasswordInput(),
-            const SizedBox(height: 8.0),
-            _ConfirmPasswordInput(),
-            const SizedBox(height: 8.0),
-            _SignUpButton(),
-          ],
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _NameInput(),
+              const SizedBox(height: 8.0),
+              _EmailInput(),
+              const SizedBox(height: 8.0),
+              _PasswordInput(),
+              const SizedBox(height: 8.0),
+              _ConfirmPasswordInput(),
+              const SizedBox(height: 8.0),
+              _SignUpButton(),
+            ],
+          ),
         ),
       ),
+    );
+  }
+}
+
+class _NameInput extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<SignUpCubit, SignUpState>(
+      buildWhen: (previous, current) => previous.email != current.email,
+      builder: (context, state) {
+        return TextField(
+          key: const Key('signUpForm_nameInput_textField'),
+          onChanged: (name) => context.read<SignUpCubit>().nameChanged(name),
+          keyboardType: TextInputType.emailAddress,
+          decoration: InputDecoration(
+            labelText: 'Tên hiển thị',
+            helperText: '',
+            errorText: state.name.invalid ? 'invalid name' : null,
+          ),
+        );
+      },
     );
   }
 }
@@ -54,7 +83,7 @@ class _EmailInput extends StatelessWidget {
           onChanged: (email) => context.read<SignUpCubit>().emailChanged(email),
           keyboardType: TextInputType.emailAddress,
           decoration: InputDecoration(
-            labelText: 'email',
+            labelText: 'Email',
             helperText: '',
             errorText: state.email.invalid ? 'invalid email' : null,
           ),
@@ -72,11 +101,10 @@ class _PasswordInput extends StatelessWidget {
       builder: (context, state) {
         return TextField(
           key: const Key('signUpForm_passwordInput_textField'),
-          onChanged: (password) =>
-              context.read<SignUpCubit>().passwordChanged(password),
+          onChanged: (password) => context.read<SignUpCubit>().passwordChanged(password),
           obscureText: true,
           decoration: InputDecoration(
-            labelText: 'password',
+            labelText: 'Mật khẩu',
             helperText: '',
             errorText: state.password.invalid ? 'invalid password' : null,
           ),
@@ -90,22 +118,16 @@ class _ConfirmPasswordInput extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<SignUpCubit, SignUpState>(
-      buildWhen: (previous, current) =>
-      previous.password != current.password ||
-          previous.confirmedPassword != current.confirmedPassword,
+      buildWhen: (previous, current) => previous.password != current.password || previous.confirmedPassword != current.confirmedPassword,
       builder: (context, state) {
         return TextField(
           key: const Key('signUpForm_confirmedPasswordInput_textField'),
-          onChanged: (confirmPassword) => context
-              .read<SignUpCubit>()
-              .confirmedPasswordChanged(confirmPassword),
+          onChanged: (confirmPassword) => context.read<SignUpCubit>().confirmedPasswordChanged(confirmPassword),
           obscureText: true,
           decoration: InputDecoration(
-            labelText: 'confirm password',
+            labelText: 'Xác nhận mật khẩu',
             helperText: '',
-            errorText: state.confirmedPassword.invalid
-                ? 'passwords do not match'
-                : null,
+            errorText: state.confirmedPassword.invalid ? 'passwords do not match' : null,
           ),
         );
       },
@@ -122,16 +144,14 @@ class _SignUpButton extends StatelessWidget {
         return state.status.isSubmissionInProgress
             ? const CircularProgressIndicator()
             : RaisedButton(
-          key: const Key('signUpForm_continue_raisedButton'),
-          child: const Text('SIGN UP'),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(30.0),
-          ),
-          color: Colors.orangeAccent,
-          onPressed: state.status.isValidated
-              ? () => context.read<SignUpCubit>().signUpFormSubmitted()
-              : null,
-        );
+                key: const Key('signUpForm_continue_raisedButton'),
+                child: const Text('Đăng Ký'),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30.0),
+                ),
+                color: Colors.orangeAccent,
+                onPressed: state.status.isValidated ? () => context.read<SignUpCubit>().signUpFormSubmitted() : null,
+              );
       },
     );
   }

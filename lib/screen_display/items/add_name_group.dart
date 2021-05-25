@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_snap_chat/blocs/add_search_name_bloc/add_search_name_bloc.dart';
 import 'package:flutter_snap_chat/blocs/add_search_name_bloc/add_search_name_event.dart';
 import 'package:flutter_snap_chat/blocs/authentication_bloc/bloc.dart';
-import 'package:flutter_snap_chat/const.dart';
+import 'package:flutter_snap_chat/constant/app_color.dart';
 import 'package:flutter_snap_chat/models/user_model.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 class AddNameGroup extends StatefulWidget {
@@ -85,7 +85,7 @@ class _AddNameGroupState extends State<AddNameGroup> {
       child: Row(
         children: <Widget>[
           Material(
-            child: userModel.photo != null
+            child: userModel.avatar != null
                 ? CachedNetworkImage(
                     placeholder: (context, url) => Container(
                       child: CircularProgressIndicator(
@@ -96,7 +96,7 @@ class _AddNameGroupState extends State<AddNameGroup> {
                       height: 50.0,
                       padding: EdgeInsets.all(15.0),
                     ),
-                    imageUrl: userModel.photo,
+                    imageUrl: userModel.avatar,
                     width: 50.0,
                     height: 50.0,
                     fit: BoxFit.cover,

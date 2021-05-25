@@ -10,7 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_snap_chat/blocs/chat_bloc/bloc.dart';
 import 'package:flutter_snap_chat/blocs/user_provider_bloc/user_provider_cubit.dart';
-import 'package:flutter_snap_chat/const.dart';
+import 'package:flutter_snap_chat/constant/app_color.dart';
 import 'package:flutter_snap_chat/models/user_model.dart';
 import 'package:flutter_snap_chat/utils/call_utilities.dart';
 import 'package:flutter_snap_chat/utils/permissions.dart';
@@ -740,7 +740,7 @@ class ChatScreenState extends State<ChatScreen> {
               },
             ),
             Material(
-              child: CachedNetworkImage(
+              child:widget.peerAvatar != null ? CachedNetworkImage(
                 placeholder: (context, url) => Container(
                   child: CircularProgressIndicator(
                     strokeWidth: 1.0,
@@ -754,6 +754,10 @@ class ChatScreenState extends State<ChatScreen> {
                 width: 35.0,
                 height: 35.0,
                 fit: BoxFit.cover,
+              ) : Icon(
+                Icons.account_circle,
+                size: 35,
+                color: greyColor,
               ),
               borderRadius: BorderRadius.all(
                 Radius.circular(18.0),

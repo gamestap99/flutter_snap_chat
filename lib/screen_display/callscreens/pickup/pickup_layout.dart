@@ -17,19 +17,22 @@ class PickupLayout extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final    _uid = context
-        .select((FriendProviderCubit bloc) => bloc.state.userModel.id.toString());
+    var    _uid ;
+    try{
+      _uid = context
+          .select((FriendProviderCubit bloc) => bloc.state.userModel.id.toString());
 
-    print("uid pickup: " +_uid);
+    }catch(ex){
+      print("uid pickup: " +ex);
+    }
+
+
 
     return (_uid != null)
         ? StreamBuilder<DocumentSnapshot>(
             stream: callMethods.callStream(uid:_uid),
             builder: (context, snapshot) {
-              print("data pickup:");
-              print(snapshot.data.toString());
-              print(snapshot.data.data().toString());
-              print(snapshot.hasData && snapshot.data != null);
+
               if (snapshot.hasData && snapshot.data != null && snapshot.data.data() != null) {
 
                 CallModel call = CallModel.fromMap(snapshot.data.data());

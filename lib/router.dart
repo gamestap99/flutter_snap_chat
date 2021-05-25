@@ -12,7 +12,7 @@ import 'package:flutter_snap_chat/screen_display/add_group_display_screen.dart';
 import 'package:flutter_snap_chat/screen_display/login.dart';
 import 'package:flutter_snap_chat/screen_display/menu_screen.dart';
 import 'package:flutter_snap_chat/screen_display/sign_up_page.dart';
-import 'package:flutter_snap_chat/settings.dart';
+import 'package:flutter_snap_chat/screen_display/settings.dart';
 
 import 'containers/containers.dart';
 

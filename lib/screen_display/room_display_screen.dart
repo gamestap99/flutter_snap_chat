@@ -14,7 +14,7 @@ import 'package:flutter_snap_chat/blocs/room_bloc/room_bloc.dart';
 import 'package:flutter_snap_chat/blocs/room_bloc/room_state.dart';
 import 'package:flutter_snap_chat/blocs/user_provider_bloc/user_provider_cubit.dart';
 import 'package:flutter_snap_chat/config/app.dart';
-import 'package:flutter_snap_chat/const.dart';
+import 'package:flutter_snap_chat/constant/app_color.dart';
 import 'package:flutter_snap_chat/containers/add_search_name_chat_container.dart';
 import 'package:flutter_snap_chat/router.dart';
 import 'package:flutter_snap_chat/screen_display/items/chat_item.dart';
@@ -32,8 +32,7 @@ class RoomDisplayScreen extends StatefulWidget {
 
 class _RoomDisplayScreenState extends State<RoomDisplayScreen> {
   final FirebaseMessaging firebaseMessaging = FirebaseMessaging();
-  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-      FlutterLocalNotificationsPlugin();
+  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
   @override
   void initState() {
@@ -41,31 +40,13 @@ class _RoomDisplayScreenState extends State<RoomDisplayScreen> {
     super.initState();
     registerNotification();
     configLocalNotification();
-
-    // FirebaseAuth.instance.idTokenChanges().listen((firebaseUser) async {
-    //   if(firebaseUser != null){
-    //     // Get JWT from Firebase
-    //     String token = await firebaseUser.getIdToken();
-    //     print('test:'+token.toString());
-    //     if(token != null){
-    //       //Call ConnectyCube Flutter SDK method for auth via phone number
-    //       signInUsingFirebase(App.Firebase_AppId, token).then((cubeUser) {
-    //         print('test:'+cubeUser.toString());
-    //       }).catchError((onError){
-    //
-    //       });
-    //     }
-    //   }
-    // });
   }
 
-  Future<void> _onCallAccepted(String sessionId, int callType, int callerId,
-      String callerName, Set<int> opponentsIds) async {
+  Future<void> _onCallAccepted(String sessionId, int callType, int callerId, String callerName, Set<int> opponentsIds) async {
     // onCallAccepted.call(sessionId);
   }
 
-  Future<void> _onCallRejected(String sessionId, int callType, int callerId,
-      String callerName, Set<int> opponentsIds) async {
+  Future<void> _onCallRejected(String sessionId, int callType, int callerId, String callerName, Set<int> opponentsIds) async {
     // onCallEnded.call(sessionId);
   }
 
@@ -104,29 +85,22 @@ class _RoomDisplayScreenState extends State<RoomDisplayScreen> {
 
     firebaseMessaging.getToken().then((token) {
       print('token: $token');
-      FirebaseFirestore.instance
-          .collection('users')
-          .doc(widget.uid)
-          .update({'pushToken': token});
+      FirebaseFirestore.instance.collection('users').doc(widget.uid).update({'pushToken': token});
     }).catchError((err) {
       Fluttertoast.showToast(msg: err.message.toString());
     });
   }
 
   void configLocalNotification() {
-    var initializationSettingsAndroid =
-        new AndroidInitializationSettings('ic_launcher');
+    var initializationSettingsAndroid = new AndroidInitializationSettings('ic_launcher');
     var initializationSettingsIOS = new IOSInitializationSettings();
-    var initializationSettings = new InitializationSettings(
-        initializationSettingsAndroid, initializationSettingsIOS);
+    var initializationSettings = new InitializationSettings(initializationSettingsAndroid, initializationSettingsIOS);
     flutterLocalNotificationsPlugin.initialize(initializationSettings);
   }
 
   void showNotification(message) async {
     var androidPlatformChannelSpecifics = new AndroidNotificationDetails(
-      Platform.isAndroid
-          ? 'com.dfa.flutterchatdemo'
-          : 'com.duytq.flutterchatdemo',
+      Platform.isAndroid ? 'com.dfa.flutterchatdemo' : 'com.duytq.flutterchatdemo',
       'Flutter chat demo',
       'your channel description',
       playSound: true,
@@ -135,30 +109,27 @@ class _RoomDisplayScreenState extends State<RoomDisplayScreen> {
       priority: Priority.High,
     );
     var iOSPlatformChannelSpecifics = new IOSNotificationDetails();
-    var platformChannelSpecifics = new NotificationDetails(
-        androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+    var platformChannelSpecifics = new NotificationDetails(androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
 
     print(message);
     print(message['body'].toString());
     print(json.encode(message));
 
-    await flutterLocalNotificationsPlugin.show(0, message['title'].toString(),
-        message['body'].toString(), platformChannelSpecifics,
-        payload: json.encode(message));
+    await flutterLocalNotificationsPlugin.show(0, message['title'].toString(), message['body'].toString(), platformChannelSpecifics, payload: json.encode(message));
 
     // await flutterLocalNotificationsPlugin.show(0, 'plain title', 'plain body', platformChannelSpecifics, payload: 'item x');
   }
 
   @override
   Widget build(BuildContext context) {
-    String uid = context
-        .select((AuthenticationBloc bloc) => bloc.state.user.id.toString());
-    String image = context
-        .select((FriendProviderCubit bloc) => bloc.state.userModel.photo);
+    String uid = context.select((AuthenticationBloc bloc) => bloc.state.user.id.toString());
+    String image = context.select((FriendProviderCubit bloc) => bloc.state.userModel.avatar);
 
+    print("dd----");
+    print(image);
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.amberAccent[500],
+        // backgroundColor: Colors.amberAccent[500],
         title: Row(
           children: [
             MaterialButton(
@@ -168,8 +139,7 @@ class _RoomDisplayScreenState extends State<RoomDisplayScreen> {
                         placeholder: (context, url) => Container(
                           child: CircularProgressIndicator(
                             strokeWidth: 1.0,
-                            valueColor:
-                                AlwaysStoppedAnimation<Color>(themeColor),
+                            valueColor: AlwaysStoppedAnimation<Color>(themeColor),
                           ),
                           width: 50.0,
                           height: 50.0,
@@ -197,8 +167,7 @@ class _RoomDisplayScreenState extends State<RoomDisplayScreen> {
         actions: [
           IconButton(
             icon: Icon(Icons.edit),
-            onPressed: () =>
-                Navigator.of(context).push(CupertinoPageRoute(builder: (_) {
+            onPressed: () => Navigator.of(context).push(CupertinoPageRoute(builder: (_) {
               return AddSearchNameChatContainer();
             })),
           ),
@@ -220,6 +189,22 @@ class _RoomDisplayScreenState extends State<RoomDisplayScreen> {
             if (state.rooms.length > 0) {
               return Column(
                 children: [
+                  Container(
+                    child: ListTile(
+                      onTap: (){
+
+                      },
+                      title: Text("Trò truyện cùng ND Bot",style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: primaryColor,
+                      ),),
+                      trailing: FaIcon(FontAwesomeIcons.robot),
+                    ),
+                  ),
+                  Divider(
+                    height: 0,
+                  ),
                   Expanded(
                     child: ListView.separated(
                       itemBuilder: (BuildContext context, int index) {
@@ -243,10 +228,19 @@ class _RoomDisplayScreenState extends State<RoomDisplayScreen> {
                 ],
               );
             } else {
-              return Center(
-                  child: Container(
-                child: Text("Hãy nhắn tin đi nào!"),
-              ));
+              return Column(
+                children: [
+                  Container(
+                    child: ListTile(
+                      title: Text("Trò truyện cùng ND Bot"),
+                    ),
+                  ),
+                  Center(
+                      child: Container(
+                    child: Text("Hãy nhắn tin đi nào!"),
+                  )),
+                ],
+              );
             }
           } else {
             return Container(

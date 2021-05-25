@@ -43,6 +43,7 @@ class AuthenticationBloc
   AuthenticationState _mapAuthenticationUserChangedToState(
     AuthenticationUserChanged event,
   ) {
+
     return event.user != UserFirebase.empty
         ? AuthenticationState.authenticated(event.user)
         : const AuthenticationState.unauthenticated();

@@ -12,7 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_snap_chat/blocs/chat_group_bloc/chat_group_cubit.dart';
 import 'package:flutter_snap_chat/blocs/chat_group_bloc/chat_group_state.dart';
-import 'package:flutter_snap_chat/const.dart';
+import 'package:flutter_snap_chat/constant/app_color.dart';
 import 'package:flutter_snap_chat/home.dart';
 import 'package:flutter_snap_chat/models/room_model.dart';
 import 'package:flutter_snap_chat/models/user_model.dart';
@@ -346,7 +346,7 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
                       height: 35.0,
                       padding: EdgeInsets.all(10.0),
                     ),
-                    imageUrl: user.photo,
+                    imageUrl: user.avatar,
                     width: 35.0,
                     height: 35.0,
                     fit: BoxFit.cover,

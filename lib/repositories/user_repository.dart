@@ -2,13 +2,12 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
-import 'package:flutter_snap_chat/database/user.dart';
+import 'package:flutter_snap_chat/constant/consts.dart';
+import 'package:flutter_snap_chat/models/user_model.dart';
 import 'package:flutter_snap_chat/repositories/user_firebase.dart';
 import 'package:flutter_snap_chat/utils/firebase_collection.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:hive/hive.dart';
 import 'package:meta/meta.dart';
-import 'package:flutter_snap_chat/models/user_model.dart';
 
 
 
@@ -63,6 +62,7 @@ class AuthenticationRepository {
   Future<void> signUpFireBase({
     @required String email,
     @required String password,
+    @required String name,
   }) async {
     assert(email != null && password != null);
     try {
@@ -70,7 +70,16 @@ class AuthenticationRepository {
         email: email,
         password: password,
       ).then((value) {
-        FirebaseFirestore.instance.collection('users').doc(value.user.uid).set({});
+        print("dd");
+        print(value.toString());
+
+        FirebaseFirestore.instance.collection('users').doc(value.user.uid).set({
+            "nickname":name,
+            "avatar":noAvatar,
+            "background":noImageAvailable,
+            "status":"0",
+            "pushToken":null,
+        });
 
       });
     } on Exception {
@@ -78,9 +87,7 @@ class AuthenticationRepository {
     }
   }
 
-  /// Starts the Sign In with Google Flow.
-  ///
-  /// Throws a [LogInWithGoogleFailure] if an exception occurs.
+
   Future<void> logInWithGoogle() async {
     try {
       final googleUser = await _googleSignIn.signIn();

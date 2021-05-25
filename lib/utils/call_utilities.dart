@@ -16,10 +16,10 @@ class CallUtils {
     CallModel call = CallModel(
       callerId: from.id,
       callerName: from.name,
-      callerPic: from.photo,
+      callerPic: from.avatar,
       receiverId: to.id,
       receiverName: to.name,
-      receiverPic: to.photo,
+      receiverPic: to.avatar,
       roomId: roomId,
       channelId: Random().nextInt(1000).toString(),
     );

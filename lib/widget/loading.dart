@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_snap_chat/constant/app_color.dart';
 
-import '../const.dart';
+
 
 class Loading extends StatelessWidget {
   const Loading();

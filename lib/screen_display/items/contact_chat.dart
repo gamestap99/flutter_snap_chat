@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_snap_chat/compements/message_input.dart';
 import 'package:flutter_snap_chat/compements/message_item.dart';
-import 'package:flutter_snap_chat/const.dart';
+import 'package:flutter_snap_chat/constant/app_color.dart';
 
 class ContactChat extends StatefulWidget {
   final String peerID;

@@ -1,5 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_snap_chat/blocs/authentication_bloc/bloc.dart';
@@ -16,28 +14,14 @@ class ControlContainer extends StatefulWidget {
 }
 
 class _ControlContainerState extends State<ControlContainer> {
-  FriendProviderCubit userProviderCubit;
-  AuthenticationBloc authenticationBloc;
+
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    // authenticationBloc = context.read<AuthenticationBloc>();
-    // userProviderCubit = context.read<UserProviderCubit>();
-    // userProviderCubit..getUser(authenticationBloc.state.user.id);
-    // FirebaseAuth.instance
-    //     .authStateChanges()
-    //     .listen((User user) {
-    //   if (user == null) {
-    //     print('User is currently signed out!');
-    //   } else {
-    //     FirebaseFirestore.instance.collection('users')
-    //         .doc(user.uid).update({
-    //       'status':"0",
-    //     });
-    //   }
-    // });
+
+
   }
 
   @override
@@ -49,9 +33,7 @@ class _ControlContainerState extends State<ControlContainer> {
   @override
   Widget build(BuildContext context) {
     String uid = context.select((AuthenticationBloc bloc) => bloc.state.user.id.toString());
-    // context.select((UserProviderCubit cubit) =>cubit..getUser(uid) );
-    print(uid + "uid:  " + uid);
-    Map<String, dynamic> argument = ModalRoute.of(context).settings.arguments;
+
     return MultiBlocProvider(
       providers: [
         BlocProvider(

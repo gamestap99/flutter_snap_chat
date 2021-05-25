@@ -1,16 +1,18 @@
+
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_snap_chat/blocs/authentication_bloc/bloc.dart';
+import 'package:flutter_snap_chat/blocs/authentication_bloc/authentication_bloc.dart';
 import 'package:flutter_snap_chat/blocs/count_request_friend_bloc/count_request_friend_bloc.dart';
 import 'package:flutter_snap_chat/blocs/friend_bloc/bloc.dart';
-import 'package:flutter_snap_chat/const.dart';
+import 'package:flutter_snap_chat/blocs/friend_bloc/friend_bloc.dart';
+import 'package:flutter_snap_chat/constant/app_color.dart';
 import 'package:flutter_snap_chat/containers/process_friend_container.dart';
 import 'package:flutter_snap_chat/containers/profile_container.dart';
 import 'package:flutter_snap_chat/models/user_model.dart';
-import 'package:flutter_snap_chat/screen_display/profile_test.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class FriendDisplayScreen extends StatefulWidget {
@@ -190,7 +192,7 @@ class _FriendDisplayScreenState extends State<FriendDisplayScreen> {
                           peerUser: UserModel(
                             id: snapshot.id,
                             name: snapshot.data()['nickname'],
-                            photo: snapshot.data()['photoUrl'],
+                            avatar: snapshot.data()['photoUrl'],
                             fcmToken: snapshot.data()['pushToken'],
                             status: snapshot.data()['status'],
                           ),
