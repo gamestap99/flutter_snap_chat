@@ -15,7 +15,7 @@ class InitScreen extends StatelessWidget {
             break;
           case AuthenticationStatus.authenticated:
             print("fsdfsdfds");
-            context.read<UserProviderCubit>().getUser(state.user.id).then((value) => Navigator.of(context).pushNamedAndRemoveUntil(AppRoutes.control, (route) => false, arguments: {
+            context.read<FriendProviderCubit>().getUser(state.user.id).then((value) => Navigator.of(context).pushNamedAndRemoveUntil(AppRoutes.control, (route) => false, arguments: {
                   "userId": state.user.id,
                 }));
 

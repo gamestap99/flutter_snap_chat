@@ -6,6 +6,8 @@ import 'package:flutter_snap_chat/const.dart';
 import 'package:flutter_snap_chat/containers/chat_container.dart';
 import 'package:flutter_snap_chat/containers/chat_group_container.dart';
 import 'package:flutter_snap_chat/models/room_model.dart';
+import 'package:flutter_snap_chat/models/user_model.dart';
+import 'package:intl/intl.dart';
 
 class ChatItem extends StatefulWidget {
   final String roomID;
@@ -16,6 +18,7 @@ class ChatItem extends StatefulWidget {
   final String type;
   final String id;
   final RoomModel roomModel;
+  final String createdAt;
 
   const ChatItem({
     Key key,
@@ -27,6 +30,7 @@ class ChatItem extends StatefulWidget {
     @required this.type,
     @required this.id,
     @required this.roomModel,
+    @required this.createdAt,
   }) : super(key: key);
 
   @override
@@ -39,6 +43,7 @@ class _ChatItemState extends State<ChatItem> {
   String perId;
   String peerAvatar;
   bool isLoading = false;
+  UserModel _receiver;
 
   @override
   void initState() {
@@ -51,13 +56,18 @@ class _ChatItemState extends State<ChatItem> {
           setState(() {
             isLoading = true;
           });
-          FirebaseFirestore.instance.collection('users').doc(element).get().then((value) {
+          FirebaseFirestore.instance
+              .collection('users')
+              .doc(element)
+              .get()
+              .then((value) {
             if (value.exists) {
               setState(() {
                 perId = value.id;
                 peerAvatar = value["photoUrl"];
                 print(value.data());
                 user = value.data();
+                _receiver = UserModel.fromSnapShot(value);
                 isLoading = false;
               });
             }
@@ -81,13 +91,16 @@ class _ChatItemState extends State<ChatItem> {
                             placeholder: (context, url) => Container(
                               child: CircularProgressIndicator(
                                 strokeWidth: 1.0,
-                                valueColor: AlwaysStoppedAnimation<Color>(themeColor),
+                                valueColor:
+                                    AlwaysStoppedAnimation<Color>(themeColor),
                               ),
                               width: 50.0,
                               height: 50.0,
                               padding: EdgeInsets.all(15.0),
                             ),
-                            imageUrl: widget.type == "0" ? widget.roomImage : peerAvatar,
+                            imageUrl: widget.type == "0"
+                                ? widget.roomImage
+                                : peerAvatar,
                             width: 50.0,
                             height: 50.0,
                             fit: BoxFit.cover,
@@ -107,27 +120,55 @@ class _ChatItemState extends State<ChatItem> {
                           //Task: chua add group name
                           Container(
                             child: Text(
-                              widget.type == "0" ? widget.name : user["nickname"],
-                              style: TextStyle(color: primaryColor, fontSize: 17, fontWeight: FontWeight.w800),
+                              widget.type == "0"
+                                  ? widget.name
+                                  : user["nickname"],
+                              style: TextStyle(
+                                // color: primaryColor,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w400,
+                              ),
                             ),
                             alignment: Alignment.centerLeft,
                             margin: EdgeInsets.fromLTRB(10.0, 0.0, 0.0, 5.0),
                           ),
-                          Container(
-                            child: Text(
-                              widget.lastMessage,
-                              style: TextStyle(
-                                color: primaryColor,
-                                fontSize: 13,
-                                fontWeight: FontWeight.w400
+                          Row(
+                            children: [
+                              Flexible(
+                                child: Container(
+                                  child: Text(
+                                    widget.lastMessage,
+                                    style: TextStyle(
+                                        color: primaryColor,
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w400),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  alignment: Alignment.centerLeft,
+                                  margin:
+                                      EdgeInsets.fromLTRB(10.0, 0.0, 0.0, 0.0),
+                                ),
                               ),
-                            ),
-                            alignment: Alignment.centerLeft,
-                            margin: EdgeInsets.fromLTRB(10.0, 0.0, 0.0, 0.0),
-                          )
+                              Text("-"),
+                              Container(
+                                child: Text(
+                                  DateTime.fromMicrosecondsSinceEpoch(
+                                          int.parse(widget.createdAt))
+                                      .toString(),
+                                  style: TextStyle(
+                                      color: primaryColor,
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w400),
+                                ),
+                                alignment: Alignment.centerLeft,
+                                margin:
+                                    EdgeInsets.fromLTRB(10.0, 0.0, 0.0, 0.0),
+                              ),
+                            ],
+                          ),
                         ],
                       ),
-                      margin: EdgeInsets.only(left: 20.0),
+                      margin: EdgeInsets.only(left: 5.0),
                     ),
                   ),
                 ],
@@ -143,7 +184,7 @@ class _ChatItemState extends State<ChatItem> {
                                 peerAvatar: peerAvatar,
                                 peerId: perId,
                                 perToken: user["pushToken"],
-                                peerName: user['nickname'],
+                                peerName: user['nickname'], receiver: _receiver,
                               )));
                 } else {
                   Navigator.of(context).push(CupertinoPageRoute(
@@ -152,11 +193,11 @@ class _ChatItemState extends State<ChatItem> {
                           )));
                 }
               },
-              color: greyColor2,
-              padding: EdgeInsets.fromLTRB(25.0, 10.0, 25.0, 10.0),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+              // color: greyColor2,
+              padding: EdgeInsets.fromLTRB(15.0, 10.0, 10.0, 0.0),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0)),
             ),
-            margin: EdgeInsets.only(bottom: 10.0, left: 5.0, right: 5.0),
           )
         : Container();
   }

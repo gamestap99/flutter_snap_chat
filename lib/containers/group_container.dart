@@ -11,7 +11,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 class GroupContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    String uid = context.select((UserProviderCubit bloc) => bloc.state.userModel.id.toString());
+    String uid = context.select((FriendProviderCubit bloc) => bloc.state.userModel.id.toString());
     return BlocProvider(
       create: (_) => AddSearchNameBloc(ApiFriendRepository(), uid),
       child: GroupScreen(),

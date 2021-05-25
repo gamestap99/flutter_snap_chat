@@ -48,6 +48,17 @@ dependencies:
   equatable: ^1.0.1
   flutter_bloc: ^6.1.1
   meta: ^1.1.8
+  agora_rtc_engine: ^3.3.3
+  flutter_voip_push_notification: ^0.0.3
+  permission_handler: 3.0.0
+  assets_audio_player: 2.0.15
+  flutter_call_kit:
+    git:
+      url: git://github.com/peerwaya/flutter_call_kit.git
+      ref: master
+
+  connectycube_flutter_call_kit: ^0.0.1-dev.1
+
 dev_dependencies:
   hive_generator: ^0.7.0+2
   build_runner: ^1.10.0
@@ -68,6 +79,7 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/
+    - assets/audios/
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
 

@@ -17,7 +17,7 @@ class GroupScreen extends StatefulWidget {
 class _GroupScreenState extends State<GroupScreen> {
   @override
   Widget build(BuildContext context) {
-    String uid = context.select((UserProviderCubit bloc) => bloc.state.userModel.id.toString());
+    String uid = context.select((FriendProviderCubit bloc) => bloc.state.userModel.id.toString());
     print("uid group" + uid);
     return Scaffold(
       appBar: AppBar(

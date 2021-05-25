@@ -7,6 +7,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_snap_chat/blocs/authentication_bloc/bloc.dart';
 import 'package:flutter_snap_chat/blocs/process_contact_bloc/process_contact_bloc.dart';
 import 'package:flutter_snap_chat/blocs/user_provider_bloc/user_provider_cubit.dart';
+import 'package:flutter_snap_chat/config/app.dart';
 import 'package:flutter_snap_chat/database/user.g.dart';
 import 'package:flutter_snap_chat/repositories/contact_repository.dart';
 import 'package:flutter_snap_chat/repositories/friend_repository.dart';
@@ -54,7 +55,7 @@ class MyApp extends StatelessWidget {
               create: (_) => ProcessContactBloc(ApiContactRepository()),
             ),
             BlocProvider(
-              create: (_) => UserProviderCubit(ApiFriendRepository()),
+              create: (_) => FriendProviderCubit(ApiFriendRepository()),
             )
           ],
           child: MyAppView(),
@@ -75,6 +76,11 @@ class _MyAppViewState extends State<MyAppView> with WidgetsBindingObserver {
   @override
   initState() {
     super.initState();
+    // init(
+    //   App.APP_ID,
+    //   App.AUTH_KEY,
+    //   App.AUTH_SECRET,
+    // );
 
     WidgetsBinding.instance.addObserver(this);
   }

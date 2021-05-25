@@ -13,20 +13,16 @@ class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Đăng Nhập"),
-      ),
+      // appBar: AppBar(
+      //   title: Text("Đăng Nhập"),
+      // ),
       body: BlocListener<LoginCubit, LoginState>(
         listener: (context, state) {
           if (state.status.isSubmissionFailure) {
-            Scaffold.of(context)
-              ..hideCurrentSnackBar()
-              ..showSnackBar(
-                const SnackBar(content: Text('Authentication Failure')),
-              );
+            _onShowDialog(context,state.errorMessage);
           }
           else if(state.status.isSubmissionSuccess){
-            context.read<UserProviderCubit>().getUser(context.read<AuthenticationBloc>().state.user.id);
+            context.read<FriendProviderCubit>().getUser(context.read<AuthenticationBloc>().state.user.id);
             Navigator.of(context).pushNamedAndRemoveUntil(AppRoutes.control, (route) => false);
           }
         },
@@ -41,13 +37,19 @@ class LoginScreen extends StatelessWidget {
                   height: 120,
                 ),
                 const SizedBox(height: 16.0),
-                _EmailInput(),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(10,0,10,0),
+                  child: _EmailInput(),
+                ),
                 const SizedBox(height: 8.0),
-                _PasswordInput(),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(10,0,10,0),
+                  child: _PasswordInput(),
+                ),
                 const SizedBox(height: 8.0),
                 _LoginButton(),
-                const SizedBox(height: 8.0),
-                _GoogleLoginButton(),
+                // const SizedBox(height: 8.0),
+                // _GoogleLoginButton(),
                 const SizedBox(height: 4.0),
                 _SignUpButton(),
               ],
@@ -55,6 +57,30 @@ class LoginScreen extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+
+  void _onShowDialog(BuildContext context,String message){
+    Widget okButton = FlatButton(
+      child: Text("Thử lại"),
+      onPressed: () =>Navigator.pop(context),
+    );
+
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      title: Text("Thông báo"),
+      content: Text(message),
+      actions: [
+        okButton,
+      ],
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
     );
   }
 }
@@ -70,7 +96,7 @@ class _EmailInput extends StatelessWidget {
           onChanged: (email) => context.read<LoginCubit>().emailChanged(email),
           keyboardType: TextInputType.emailAddress,
           decoration: InputDecoration(
-            labelText: 'email',
+            labelText: 'Email',
             helperText: '',
             errorText: state.email.invalid ? 'invalid email' : null,
           ),
@@ -91,7 +117,7 @@ class _PasswordInput extends StatelessWidget {
           onChanged: (password) => context.read<LoginCubit>().passwordChanged(password),
           obscureText: true,
           decoration: InputDecoration(
-            labelText: 'password',
+            labelText: 'Mật khẩu',
             helperText: '',
             // errorText: state.password.invalid ? 'invalid password' : null,
           ),
@@ -111,7 +137,7 @@ class _LoginButton extends StatelessWidget {
             ? const CircularProgressIndicator()
             : RaisedButton(
                 key: const Key('loginForm_continue_raisedButton'),
-                child: const Text('LOGIN'),
+                child: const Text('Đăng nhập'),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(30.0),
                 ),
@@ -147,7 +173,7 @@ class _SignUpButton extends StatelessWidget {
     final theme = Theme.of(context);
     return InkWell(
       child: Text(
-        'CREATE ACCOUNT',
+        'Bạn chưa có tài khoản? Đăng ký!',
         style: TextStyle(color: theme.primaryColor),
       ),
       onTap: () {

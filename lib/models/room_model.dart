@@ -10,6 +10,7 @@ class RoomModel extends Equatable {
     @required this.photo,
     @required this.type,
     @required this.member,
+    @required this.createdAt,
     this.userModel,
   })  : assert(id != null),
         assert(name != null),
@@ -24,8 +25,9 @@ class RoomModel extends Equatable {
   final String type;
   final List<String> member;
   final UserModel userModel;
+  final String createdAt;
 
   @override
   // TODO: implement props
-  List<Object> get props => [id,name,photo,message,type,member,userModel];
+  List<Object> get props => [id,name,photo,message,type,member,userModel,createdAt];
 }

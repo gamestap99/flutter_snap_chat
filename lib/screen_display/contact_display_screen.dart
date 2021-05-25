@@ -101,7 +101,7 @@ class _ContactDisplayScreenState extends State<ContactDisplayScreen> {
                     children: <Widget>[
                       Container(
                         child: Text(
-                          userModel.name,
+                          userModel.name != null ? userModel.name :"dd",
                           style: TextStyle(color: primaryColor),
                         ),
                         alignment: Alignment.centerLeft,

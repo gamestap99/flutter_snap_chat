@@ -4,9 +4,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:flutter_snap_chat/database/user.dart';
 import 'package:flutter_snap_chat/repositories/user_firebase.dart';
+import 'package:flutter_snap_chat/utils/firebase_collection.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:hive/hive.dart';
 import 'package:meta/meta.dart';
+import 'package:flutter_snap_chat/models/user_model.dart';
 
 
 
@@ -22,9 +24,7 @@ class LogInWithGoogleFailure implements Exception {}
 /// Thrown during the logout process if a failure occurs.
 class LogOutFailure implements Exception {}
 
-/// {@template authentication_repository}
-/// Repository which manages user authentication.
-/// {@endtemplate}
+
 class AuthenticationRepository {
   /// {@macro authentication_repository}
   AuthenticationRepository({
@@ -36,10 +36,21 @@ class AuthenticationRepository {
   final firebase_auth.FirebaseAuth _firebaseAuth;
   final GoogleSignIn _googleSignIn;
 
-  /// Stream of [User] which will emit the current user when
-  /// the authentication state changes.
-  ///
-  /// Emits [User.empty] if the user is not authenticated.
+
+  Future<UserFirebase> getCurrentUser() async {
+    UserFirebase currentUser;
+    currentUser =  _firebaseAuth.currentUser.toUser;
+    return currentUser;
+  }
+
+  Future<UserModel> getUserDetails() async {
+    UserFirebase currentUser = await getCurrentUser();
+
+    DocumentSnapshot documentSnapshot =await FirebaseCollection().userCollection.doc(currentUser.id).get();
+
+    return UserModel.fromSnapShot(documentSnapshot);
+  }
+
   Stream<UserFirebase> get user {
     return _firebaseAuth.authStateChanges().map((firebaseUser) {
       return firebaseUser == null ? UserFirebase.empty : firebaseUser.toUser;
@@ -49,7 +60,7 @@ class AuthenticationRepository {
   /// Creates a new user with the provided [email] and [password].
   ///
   /// Throws a [SignUpFailure] if an exception occurs.
-  Future<void> signUp({
+  Future<void> signUpFireBase({
     @required String email,
     @required String password,
   }) async {
@@ -60,6 +71,7 @@ class AuthenticationRepository {
         password: password,
       ).then((value) {
         FirebaseFirestore.instance.collection('users').doc(value.user.uid).set({});
+
       });
     } on Exception {
       throw SignUpFailure();
@@ -86,31 +98,22 @@ class AuthenticationRepository {
   /// Signs in with the provided [email] and [password].
   ///
   /// Throws a [LogInWithEmailAndPasswordFailure] if an exception occurs.
-  Future<void> logInWithEmailAndPassword({
+  Future logInWithEmailAndPassword({
     @required String email,
     @required String password,
   }) async {
     assert(email != null && password != null);
-    try {
-      await _firebaseAuth.signInWithEmailAndPassword(
+
+     var result = await _firebaseAuth.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
-    } on Exception {
-      throw LogInWithEmailAndPasswordFailure();
-    }
+
+     return result.user != null;
+
   }
 
-  // Future<void> writeDatabase(DocumentSnapshot documentSnapshot) async {
-  //   var box = await Hive.openBox('user');
-  //   var user = UserDB(documentSnapshot.id, documentSnapshot.data()['nickname'], documentSnapshot.data()['photoUrl']);
-  //   box.add(user);
-  // }
 
-  /// Signs out the current user which will emit
-  /// [User.empty] from the [user] Stream.
-  ///
-  /// Throws a [LogOutFailure] if an exception occurs.
   Future<void> logOut() async {
     try {
       await Future.wait([

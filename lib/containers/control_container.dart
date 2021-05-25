@@ -16,7 +16,7 @@ class ControlContainer extends StatefulWidget {
 }
 
 class _ControlContainerState extends State<ControlContainer> {
-  UserProviderCubit userProviderCubit;
+  FriendProviderCubit userProviderCubit;
   AuthenticationBloc authenticationBloc;
 
   @override

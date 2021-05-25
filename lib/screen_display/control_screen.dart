@@ -9,6 +9,7 @@ import 'package:flutter_snap_chat/blocs/user_provider_bloc/user_provider_state.d
 import 'package:flutter_snap_chat/containers/containers.dart';
 import 'package:flutter_snap_chat/containers/group_container.dart';
 import 'package:flutter_snap_chat/widget/bottom_navigate.dart';
+import 'package:flutter_snap_chat/screen_display/callscreens/pickup/pickup_layout.dart';
 
 class ControlScreen extends StatefulWidget {
   @override
@@ -132,39 +133,42 @@ class _ControlScreenState extends State<ControlScreen> {
         label: 'Kết nối',
       ),
     ];
-
-    return Scaffold(
-      body: BlocConsumer<UserProviderCubit, UserProviderState>(
-          builder: (context, state) {
-            return state.status == UserProviderStatus.success
-                ? buildPageView()
-                : Center(
-                    child: CircularProgressIndicator(),
-                  );
-          },
-          listener: (context,state){
-            if(state.status == UserProviderStatus.success){
-              FirebaseAuth.instance
-                  .authStateChanges()
-                  .listen((User user) {
-                if (user == null) {
-                  print('User is currently signed out!');
-                } else {
-                  FirebaseFirestore.instance.collection('users')
-                      .doc(user.uid).update({
-                    'status':"0",
-                  });
-                }
-              });
-            }
-          }),
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        currentIndex: _bottomSelectedIndex,
-        backgroundColor: Colors.white,
-        onTap: (index) => bottomTapped(index),
-        items: items,
+    return PickupLayout(
+      scaffold: Scaffold(
+        body: BlocConsumer<FriendProviderCubit, UserProviderState>(
+            builder: (context, state) {
+              return state.status == UserProviderStatus.success
+                  ? buildPageView()
+                  : Center(
+                child: CircularProgressIndicator(),
+              );
+            },
+            listener: (context,state){
+              if(state.status == UserProviderStatus.success){
+                FirebaseAuth.instance
+                    .authStateChanges()
+                    .listen((User user) {
+                  if (user == null) {
+                    print('User is currently signed out!');
+                  } else {
+                    FirebaseFirestore.instance.collection('users')
+                        .doc(user.uid).update({
+                      'status':"0",
+                    });
+                  }
+                });
+              }
+            }),
+        bottomNavigationBar: BottomNavigationBar(
+          type: BottomNavigationBarType.fixed,
+          currentIndex: _bottomSelectedIndex,
+          backgroundColor: Colors.white,
+          onTap: (index) => bottomTapped(index),
+          items: items,
+        ),
       ),
     );
+
+
   }
 }

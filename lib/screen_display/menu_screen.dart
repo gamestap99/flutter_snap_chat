@@ -12,7 +12,7 @@ import 'package:flutter_snap_chat/router.dart';
 class MenuScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final user = context.select((UserProviderCubit bloc) => bloc.state.userModel);
+    final user = context.select((FriendProviderCubit bloc) => bloc.state.userModel);
     return Scaffold(
       appBar: AppBar(
         title: Text("Tôi"),
