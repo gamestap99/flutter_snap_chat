@@ -1,6 +1,8 @@
 import 'dart:async';
 
 import 'package:agora_rtc_engine/rtc_engine.dart';
+import 'package:agora_rtc_engine/rtc_local_view.dart' as RtcLocalView;
+import 'package:agora_rtc_engine/rtc_remote_view.dart' as RtcRemoteView;
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
@@ -12,8 +14,6 @@ import 'package:flutter_snap_chat/config/app.dart';
 import 'package:flutter_snap_chat/constant/app_color.dart';
 import 'package:flutter_snap_chat/models/call_model.dart';
 import 'package:flutter_snap_chat/repositories/call_repository.dart';
-import 'package:agora_rtc_engine/rtc_local_view.dart' as RtcLocalView;
-import 'package:agora_rtc_engine/rtc_remote_view.dart' as RtcRemoteView;
 
 class CallScreen extends StatefulWidget {
   final CallModel call;
@@ -66,9 +66,7 @@ class _CallScreenState extends State<CallScreen> {
     SchedulerBinding.instance.addPostFrameCallback((_) {
       userProvider = BlocProvider.of<FriendProviderCubit>(context);
 
-      callStreamSubscription = callMethods
-          .callStream(uid: userProvider.state.userModel.id)
-          .listen((DocumentSnapshot ds) {
+      callStreamSubscription = callMethods.callStream(uid: userProvider.state.userModel.id).listen((DocumentSnapshot ds) {
         // defining the logic
         switch (ds.data) {
           case null:
@@ -101,7 +99,7 @@ class _CallScreenState extends State<CallScreen> {
             final info = 'onError: $code';
             _infoStrings.add(info);
             print("------------------------------------");
-            print("errorchanel: "+info);
+            print("errorchanel: " + info);
           });
         },
         joinChannelSuccess: (channel, uid, elapsed) {
@@ -129,7 +127,6 @@ class _CallScreenState extends State<CallScreen> {
         },
         userOffline: (uid, elapsed) {
           setState(() {
-
             final info = 'userOffline: $uid';
             _infoStrings.add(info);
             _users.remove(uid);
@@ -177,7 +174,7 @@ class _CallScreenState extends State<CallScreen> {
     switch (views.length) {
       case 1:
         return Container(
-            child: Stack(
+          child: Stack(
             children: [
               Column(
                 children: <Widget>[
@@ -186,7 +183,7 @@ class _CallScreenState extends State<CallScreen> {
               ),
               Positioned(
                 top: 100,
-                left: MediaQuery.of(context).size.width/2.9,
+                left: MediaQuery.of(context).size.width / 2.9,
                 child: Container(
                   child: Column(
                     children: [
@@ -214,21 +211,27 @@ class _CallScreenState extends State<CallScreen> {
                       SizedBox(
                         height: 5,
                       ),
-                      Text(widget.call.receiverName,style: TextStyle(
-                        fontSize: 23,
-                        color: Colors.white,
-                        inherit: true,
-                        fontWeight: FontWeight.bold,
-                      ),),
+                      Text(
+                        widget.call.receiverName,
+                        style: TextStyle(
+                          fontSize: 23,
+                          color: Colors.white,
+                          inherit: true,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                       SizedBox(
                         height: 5,
                       ),
-                      Text("Đang gọi điên...",style: TextStyle(
-                        fontSize: 15,
-                        color: Colors.white,
-                        inherit: true,
-                        fontWeight: FontWeight.normal,
-                      ),),
+                      Text(
+                        "Đang gọi điên...",
+                        style: TextStyle(
+                          fontSize: 15,
+                          color: Colors.white,
+                          inherit: true,
+                          fontWeight: FontWeight.normal,
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -247,18 +250,12 @@ class _CallScreenState extends State<CallScreen> {
       case 3:
         return Container(
             child: Column(
-          children: <Widget>[
-            _expandedVideoRow(views.sublist(0, 2)),
-            _expandedVideoRow(views.sublist(2, 3))
-          ],
+          children: <Widget>[_expandedVideoRow(views.sublist(0, 2)), _expandedVideoRow(views.sublist(2, 3))],
         ));
       case 4:
         return Container(
             child: Column(
-          children: <Widget>[
-            _expandedVideoRow(views.sublist(0, 2)),
-            _expandedVideoRow(views.sublist(2, 4))
-          ],
+          children: <Widget>[_expandedVideoRow(views.sublist(0, 2)), _expandedVideoRow(views.sublist(2, 4))],
         ));
       default:
     }
@@ -347,12 +344,7 @@ class _CallScreenState extends State<CallScreen> {
             padding: const EdgeInsets.all(12.0),
           ),
           RawMaterialButton(
-            onPressed: () => callMethods
-                .endCall(
-                  call: widget.call,
-                  log: "accept"
-                )
-                .then((value) => Navigator.of(context).pop()),
+            onPressed: () => callMethods.endCall(call: widget.call, log: "accept").then((value) => Navigator.of(context).pop()),
             child: Icon(
               Icons.call_end,
               color: Colors.white,

@@ -13,6 +13,7 @@ class MenuScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final user = context.select((FriendProviderCubit bloc) => bloc.state.userModel);
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -87,8 +88,9 @@ class MenuScreen extends StatelessWidget {
                   FirebaseFirestore.instance.collection('users').doc(user.id).update({
                     'status': "1",
                   });
-                  Navigator.of(context).pushNamedAndRemoveUntil(AppRoutes.init, (route) => false);
                   context.read<AuthenticationBloc>().add(AuthenticationLogoutRequested());
+                  Navigator.of(context).pushNamedAndRemoveUntil(AppRoutes.init, (route) => false);
+
                 },
                 child: Padding(
                   padding: const EdgeInsets.all(10.0),

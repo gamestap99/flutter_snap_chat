@@ -56,7 +56,7 @@ class ProcessFriendScreen extends StatelessWidget {
         children: [
           userModel.avatar != null
               ? CircleAvatar(
-                  radius: 100,
+                  radius: 40,
                   backgroundColor: Colors.white,
                   backgroundImage: NetworkImage(
                     userModel.avatar,

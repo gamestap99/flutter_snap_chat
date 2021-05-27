@@ -36,9 +36,12 @@ class ApiFriendRepository implements FriendRepository {
     //     users.add(key.toString().trim());
     //   }
     // });
+    print("test----");
+    print(items.toString());
+
     items.forEach((element) {
       if (element.senderId == uid) {
-        users.add(element.receiveId);
+        users.add(element.receiverId);
       } else {
         users.add(element.senderId);
       }

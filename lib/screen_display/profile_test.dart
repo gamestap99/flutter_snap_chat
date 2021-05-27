@@ -13,8 +13,9 @@ import 'package:flutter_snap_chat/models/user_model.dart';
 class ProfileTest extends StatefulWidget {
   final String uid;
   final UserModel peerUser;
+  final int index;
 
-  const ProfileTest({Key key, @required this.uid, @required this.peerUser}) : super(key: key);
+  const ProfileTest({Key key, @required this.uid, @required this.peerUser, @required this.index}) : super(key: key);
 
   @override
   _ProfileTestState createState() => _ProfileTestState();
@@ -63,7 +64,7 @@ class _ProfileTestState extends State<ProfileTest> {
               );
             } else if (state is ProcessContactLoaded) {
               return Hero(
-                tag: "infoUser",
+                tag: "infoUser ${widget.index}",
                 child: Stack(
                   children: [
                     Column(
@@ -75,7 +76,7 @@ class _ProfileTestState extends State<ProfileTest> {
                           children: [
                             AspectRatio(
                               aspectRatio: 3 / 2,
-                              child: widget.peerUser.avatar != null
+                              child: widget.peerUser.background != null
                                   ? CachedNetworkImage(
                                       placeholder: (context, url) => Container(
                                         child: CircularProgressIndicator(
@@ -86,7 +87,7 @@ class _ProfileTestState extends State<ProfileTest> {
                                         height: 50.0,
                                         padding: EdgeInsets.all(15.0),
                                       ),
-                                      imageUrl: widget.peerUser.avatar,
+                                      imageUrl: widget.peerUser.background,
                                       width: 50.0,
                                       height: 50.0,
                                       fit: BoxFit.cover,
@@ -126,7 +127,7 @@ class _ProfileTestState extends State<ProfileTest> {
                           ],
                         ),
                         SizedBox(
-                          height: 50,
+                          height:60,
                         ),
                         Text(
                           widget.peerUser.name,

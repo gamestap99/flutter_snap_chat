@@ -1,12 +1,11 @@
-
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter_snap_chat/blocs/user_provider_bloc/user_provider_cubit.dart';
 import 'package:flutter_snap_chat/repositories/user_repository.dart';
 import 'package:flutter_snap_chat/validators/confirmed_password.dart';
 import 'package:flutter_snap_chat/validators/email.dart';
 import 'package:flutter_snap_chat/validators/name_validator.dart';
 import 'package:flutter_snap_chat/validators/password.dart';
-
 import 'package:formz/formz.dart';
 
 part 'sign_up_state.dart';
@@ -78,15 +77,17 @@ class SignUpCubit extends Cubit<SignUpState> {
     ));
   }
 
-  Future<void> signUpFormSubmitted() async {
+  Future<void> signUpFormSubmitted(FriendProviderCubit friendProviderCubit) async {
     if (!state.status.isValidated) return;
     emit(state.copyWith(status: FormzStatus.submissionInProgress));
     try {
-      await _authenticationRepository.signUpFireBase(
+      final data = await _authenticationRepository.signUpFireBase(
         email: state.email.value,
         password: state.password.value,
         name: state.name.value,
       );
+
+      await friendProviderCubit.getUser(data.id);
 
       emit(state.copyWith(status: FormzStatus.submissionSuccess));
     } on Exception {

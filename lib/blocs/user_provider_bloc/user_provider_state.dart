@@ -24,5 +24,5 @@ class UserProviderState extends Equatable {
 
   @override
   // TODO: implement props
-  List<Object> get props => [userModel,status];
+  List<Object> get props => [userModel, status];
 }

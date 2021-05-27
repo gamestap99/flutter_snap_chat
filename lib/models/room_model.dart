@@ -29,5 +29,5 @@ class RoomModel extends Equatable {
 
   @override
   // TODO: implement props
-  List<Object> get props => [id,name,photo,message,type,member,userModel,createdAt];
+  List<Object> get props => [id, name, photo, message, type, member, userModel, createdAt];
 }

@@ -60,15 +60,19 @@ class SettingsScreenState extends State<SettingsScreen> {
 
     pickedFile = await imagePicker.getImage(source: ImageSource.gallery);
 
-    File image = File(pickedFile.path);
+    if(pickedFile.path != null){
+      File image = File(pickedFile.path);
 
-    if (image != null) {
-      setState(() {
-        avatarImageFile = image;
-        isLoading = true;
-      });
+      if (image != null) {
+        setState(() {
+          avatarImageFile = image;
+          isLoading = true;
+        });
+      }
+      uploadFile();
     }
-    uploadFile();
+
+
   }
 
   Future uploadFile() async {

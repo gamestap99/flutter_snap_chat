@@ -1,6 +1,5 @@
 import 'package:hive/hive.dart';
 
-
 @HiveType(typeId: 0)
 class UserDB {
   @HiveField(0)
@@ -13,5 +12,4 @@ class UserDB {
   final String photoUrl;
 
   UserDB(this.id, this.name, this.photoUrl);
-
 }

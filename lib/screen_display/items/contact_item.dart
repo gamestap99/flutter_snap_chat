@@ -7,8 +7,9 @@ import 'package:flutter_snap_chat/models/user_model.dart';
 class ContactItem extends StatelessWidget {
   final UserModel userModel;
   final String uid;
+  final int index;
 
-  const ContactItem({Key key, @required this.userModel, @required this.uid}) : super(key: key);
+  const ContactItem({Key key, @required this.userModel, @required this.uid, @required this.index}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -17,18 +18,22 @@ class ContactItem extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(builder: (_) {
-            return ProfileContainer(uid: uid, peerUser: userModel);
+            return ProfileContainer(
+              uid: uid,
+              peerUser: userModel,
+              index: index,
+            );
           }),
         );
       },
       child: Hero(
-        tag: "infoUser",
+        tag: "infoUser $index",
         child: Card(
           child: Column(
             children: [
               AspectRatio(
                 aspectRatio: 3 / 2,
-                child: userModel.avatar != null
+                child: userModel.background != null
                     ? CachedNetworkImage(
                         placeholder: (context, url) => Container(
                           child: CircularProgressIndicator(
@@ -39,7 +44,7 @@ class ContactItem extends StatelessWidget {
                           height: 50.0,
                           padding: EdgeInsets.all(15.0),
                         ),
-                        imageUrl: userModel.avatar,
+                        imageUrl: userModel.background,
                         width: 50.0,
                         height: 50.0,
                         fit: BoxFit.cover,
@@ -48,7 +53,9 @@ class ContactItem extends StatelessWidget {
                         color: greyColor.withOpacity(0.2),
                       ),
               ),
-              SizedBox(height: 5,),
+              SizedBox(
+                height: 5,
+              ),
               Container(
                 child: Row(
                   children: <Widget>[

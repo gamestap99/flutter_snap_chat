@@ -52,6 +52,10 @@ dependencies:
   flutter_voip_push_notification: ^0.0.3
   permission_handler: 3.0.0
   assets_audio_player: 2.0.15
+  dio: 3.0.10
+  timeago: 2.0.30
+  flutter_spinkit: 4.1.2+1
+
   flutter_call_kit:
     git:
       url: git://github.com/peerwaya/flutter_call_kit.git

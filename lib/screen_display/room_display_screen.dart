@@ -9,13 +9,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:flutter_snap_chat/blocs/authentication_bloc/bloc.dart';
 import 'package:flutter_snap_chat/blocs/room_bloc/room_bloc.dart';
 import 'package:flutter_snap_chat/blocs/room_bloc/room_state.dart';
 import 'package:flutter_snap_chat/blocs/user_provider_bloc/user_provider_cubit.dart';
 import 'package:flutter_snap_chat/config/app.dart';
 import 'package:flutter_snap_chat/constant/app_color.dart';
 import 'package:flutter_snap_chat/containers/add_search_name_chat_container.dart';
+import 'package:flutter_snap_chat/containers/bot_container.dart';
 import 'package:flutter_snap_chat/router.dart';
 import 'package:flutter_snap_chat/screen_display/items/chat_item.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -60,17 +60,17 @@ class _RoomDisplayScreenState extends State<RoomDisplayScreen> {
         onCallRejected: _onCallRejected,
       );
 
-      ConnectycubeFlutterCallKit.setOnLockScreenVisibility(
-        isVisible: true,
-      );
-
-      ConnectycubeFlutterCallKit.showCallNotification(
-        sessionId: "1111",
-        callType: 0,
-        callerName: "test",
-        callerId: 0,
-        opponentsIds: Set<int>.from({1, 2, 3}),
-      );
+      // ConnectycubeFlutterCallKit.setOnLockScreenVisibility(
+      //   isVisible: true,
+      // );
+      //
+      // ConnectycubeFlutterCallKit.showCallNotification(
+      //   sessionId: "1111",
+      //   callType: 0,
+      //   callerName: "test",
+      //   callerId: 0,
+      //   opponentsIds: Set<int>.from({1, 2, 3}),
+      // );
 
       // AssetsAudioPlayer().open(Audio("assets/audios/call.mp3"),autoStart: true);
       // Platform.isAndroid ? showNotification(message['notification']) : showNotification(message['aps']['alert']);
@@ -122,7 +122,7 @@ class _RoomDisplayScreenState extends State<RoomDisplayScreen> {
 
   @override
   Widget build(BuildContext context) {
-    String uid = context.select((AuthenticationBloc bloc) => bloc.state.user.id.toString());
+    String uid = context.select((FriendProviderCubit bloc) => bloc.state.userModel.id);
     String image = context.select((FriendProviderCubit bloc) => bloc.state.userModel.avatar);
 
     print("dd----");
@@ -191,14 +191,19 @@ class _RoomDisplayScreenState extends State<RoomDisplayScreen> {
                 children: [
                   Container(
                     child: ListTile(
-                      onTap: (){
-
+                      onTap: () {
+                        Navigator.of(context).push(CupertinoPageRoute(builder: (_) {
+                          return BotContainer();
+                        }));
                       },
-                      title: Text("Trò truyện cùng ND Bot",style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: primaryColor,
-                      ),),
+                      title: Text(
+                        "Trò truyện cùng ND Bot",
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: primaryColor,
+                        ),
+                      ),
                       trailing: FaIcon(FontAwesomeIcons.robot),
                     ),
                   ),
@@ -217,6 +222,7 @@ class _RoomDisplayScreenState extends State<RoomDisplayScreen> {
                           type: state.rooms[index].type,
                           createdAt: state.rooms[index].createdAt,
                           roomModel: state.rooms[index],
+                          id: uid,
                         );
                       },
                       itemCount: state.rooms.length,
@@ -235,16 +241,42 @@ class _RoomDisplayScreenState extends State<RoomDisplayScreen> {
                       title: Text("Trò truyện cùng ND Bot"),
                     ),
                   ),
-                  Center(
-                      child: Container(
+                  Container(
                     child: Text("Hãy nhắn tin đi nào!"),
-                  )),
+                  ),
                 ],
               );
             }
           } else {
-            return Container(
-              child: Center(child: Text("Hãy nhắn tin đi nào!")),
+            return Column(
+              children: [
+                Container(
+                  child: ListTile(
+                    onTap: () {
+                      Navigator.of(context).push(CupertinoPageRoute(builder: (_) {
+                        return BotContainer();
+                      }));
+                    },
+                    title: Text(
+                      "Trò truyện cùng ND Bot",
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: primaryColor,
+                      ),
+                    ),
+                    trailing: FaIcon(FontAwesomeIcons.robot),
+                  ),
+                ),
+                Divider(
+                  height: 0,
+                ),
+                Center(
+                  child: Container(
+                    child: Text("Hãy nhắn tin đi nào!"),
+                  ),
+                ),
+              ],
             );
           }
         },

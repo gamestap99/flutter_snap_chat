@@ -4,11 +4,11 @@ import 'dart:io';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 // import 'firebaseController.dart';
-const String firebaseCloudserverToken = 'AAAAhj567Ig:APA91bHwag-nBmArpNNk1IFc49sNtcGrjKggw5aKh7inosLqx4__qfMhMqHrPb7qvXu0utL6FGHP1nS9n4tMNiHdBml6YnWnzBzrXXubKT7gRCFwPlH3fSIalMHY0Nk9WPws3RORgh1N';//AAAAFxtLywg:APA91bFbcXfhUI2b2MagqgYnL
+const String firebaseCloudserverToken = 'AAAAhj567Ig:APA91bHwag-nBmArpNNk1IFc49sNtcGrjKggw5aKh7inosLqx4__qfMhMqHrPb7qvXu0utL6FGHP1nS9n4tMNiHdBml6YnWnzBzrXXubKT7gRCFwPlH3fSIalMHY0Nk9WPws3RORgh1N'; //AAAAFxtLywg:APA91bFbcXfhUI2b2MagqgYnL
 Future<dynamic> myBackgroundMessageHandler(Map<String, dynamic> message) {
   if (message.containsKey('data')) {
     print('myBackgroundMessageHandler data');
@@ -34,23 +34,19 @@ class NotificationController {
 //  }
 
   Future takeFCMTokenWhenAppLaunch() async {
-    try{
+    try {
       if (Platform.isIOS) {
-        _firebaseMessaging.requestNotificationPermissions(IosNotificationSettings(
-            sound: true,
-            badge: true,
-            alert: true
-        ));
+        _firebaseMessaging.requestNotificationPermissions(IosNotificationSettings(sound: true, badge: true, alert: true));
       }
 
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String userToken = prefs.get('FCMToken');
       if (userToken == null) {
         _firebaseMessaging.getToken().then((val) async {
-          print('Token: '+val);
+          print('Token: ' + val);
           prefs.setString('FCMToken', val);
           String userID = prefs.get('userId');
-          if(userID != null) {
+          if (userID != null) {
             // FirebaseController.instanace.updateUserToken(userID, val);
           }
         });
@@ -64,20 +60,20 @@ class NotificationController {
           if (Platform.isIOS) {
             msg = message['aps']['alert']['body'];
             name = message['aps']['alert']['title'];
-          }else {
+          } else {
             msg = message['notification']['body'];
             name = message['notification']['title'];
           }
 
           String currentChatRoom = (prefs.get('currentChatRoom') ?? 'None');
 
-          if(Platform.isIOS) {
-            if(message['chatroomid'] != currentChatRoom) {
-              sendLocalNotification(name,msg);
+          if (Platform.isIOS) {
+            if (message['chatroomid'] != currentChatRoom) {
+              sendLocalNotification(name, msg);
             }
-          }else {
-            if(message['data']['chatroomid'] != currentChatRoom) {
-              sendLocalNotification(name,msg);
+          } else {
+            if (message['data']['chatroomid'] != currentChatRoom) {
+              sendLocalNotification(name, msg);
             }
           }
 
@@ -91,57 +87,46 @@ class NotificationController {
           print("onResume: $message");
         },
       );
-
-    }catch(e) {
+    } catch (e) {
       print(e.message);
     }
   }
 
-  Future initLocalNotification() async{
+  Future initLocalNotification() async {
     if (Platform.isIOS) {
       // set iOS Local notification.
-      var initializationSettingsAndroid =
-      AndroidInitializationSettings('ic_launcher');
+      var initializationSettingsAndroid = AndroidInitializationSettings('ic_launcher');
       var initializationSettingsIOS = IOSInitializationSettings(
         requestSoundPermission: true,
         requestBadgePermission: true,
         requestAlertPermission: true,
         onDidReceiveLocalNotification: _onDidReceiveLocalNotification,
       );
-      var initializationSettings = InitializationSettings(
-          initializationSettingsAndroid, initializationSettingsIOS);
-      await _flutterLocalNotificationsPlugin.initialize(initializationSettings,
-          onSelectNotification: _selectNotification);
-    }else {// set Android Local notification.
+      var initializationSettings = InitializationSettings(initializationSettingsAndroid, initializationSettingsIOS);
+      await _flutterLocalNotificationsPlugin.initialize(initializationSettings, onSelectNotification: _selectNotification);
+    } else {
+      // set Android Local notification.
       var initializationSettingsAndroid = AndroidInitializationSettings('ic_launcher');
-      var initializationSettingsIOS = IOSInitializationSettings(
-          onDidReceiveLocalNotification: _onDidReceiveLocalNotification);
-      var initializationSettings = InitializationSettings(
-          initializationSettingsAndroid, initializationSettingsIOS);
-      await _flutterLocalNotificationsPlugin.initialize(initializationSettings,
-          onSelectNotification: _selectNotification);
+      var initializationSettingsIOS = IOSInitializationSettings(onDidReceiveLocalNotification: _onDidReceiveLocalNotification);
+      var initializationSettings = InitializationSettings(initializationSettingsAndroid, initializationSettingsIOS);
+      await _flutterLocalNotificationsPlugin.initialize(initializationSettings, onSelectNotification: _selectNotification);
     }
   }
 
-  Future _onDidReceiveLocalNotification(int id, String title, String body, String payload) async { }
+  Future _onDidReceiveLocalNotification(int id, String title, String body, String payload) async {}
 
-  Future _selectNotification(String payload) async { }
+  Future _selectNotification(String payload) async {}
 
-  sendLocalNotification(name,msg) async{
-    var androidPlatformChannelSpecifics = AndroidNotificationDetails(
-        'your channel id', 'your channel name', 'your channel description',
-        importance: Importance.Max, priority: Priority.High, ticker: 'ticker');
+  sendLocalNotification(name, msg) async {
+    var androidPlatformChannelSpecifics = AndroidNotificationDetails('your channel id', 'your channel name', 'your channel description', importance: Importance.Max, priority: Priority.High, ticker: 'ticker');
     var iOSPlatformChannelSpecifics = IOSNotificationDetails();
-    var platformChannelSpecifics = NotificationDetails(
-        androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
-    await _flutterLocalNotificationsPlugin.show(
-        0, name, msg, platformChannelSpecifics,
-        payload: 'item x');
+    var platformChannelSpecifics = NotificationDetails(androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+    await _flutterLocalNotificationsPlugin.show(0, name, msg, platformChannelSpecifics, payload: 'item x');
   }
 
   // Send a notification message
 
-  Future<void> sendNotificationMessageToPeerUser(unReadMSGCount,messageType,textFromTextField,myName,chatID,peerUserToken) async {
+  Future<void> sendNotificationMessageToPeerUser(unReadMSGCount, messageType, textFromTextField, myName, chatID, peerUserToken) async {
     FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
     await http.post(
       'https://fcm.googleapis.com/fcm/send',
@@ -154,8 +139,8 @@ class NotificationController {
           'notification': <String, dynamic>{
             'body': messageType == 'text' ? '$textFromTextField' : '(Photo)',
             'title': '$myName',
-            'badge':'$unReadMSGCount',//'$unReadMSGCount'
-            "sound" : "default"
+            'badge': '$unReadMSGCount', //'$unReadMSGCount'
+            "sound": "default"
           },
           'priority': 'high',
           'data': <String, dynamic>{
@@ -169,8 +154,7 @@ class NotificationController {
       ),
     );
 
-    final Completer<Map<String, dynamic>> completer =
-    Completer<Map<String, dynamic>>();
+    final Completer<Map<String, dynamic>> completer = Completer<Map<String, dynamic>>();
 
     _firebaseMessaging.configure(
       onMessage: (Map<String, dynamic> message) async {

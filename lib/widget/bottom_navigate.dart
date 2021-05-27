@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_snap_chat/blocs/authentication_bloc/bloc.dart';
 
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_snap_chat/models/user_model.dart';
 class NavObject {
   String route;
   Icon navIcon;
@@ -56,8 +55,7 @@ class _BottomNavigateState extends State<BottomNavigate> {
         _selectedIndex = index;
 
         Navigator.of(context).popAndPushNamed(navs[index].route, arguments: {
-          "userId":  uid,
-
+          "userId": uid,
         });
       });
     }

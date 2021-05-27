@@ -1,5 +1,3 @@
-
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
@@ -29,46 +27,32 @@ class _FriendDisplayScreenState extends State<FriendDisplayScreen> {
 
   @override
   Widget build(BuildContext context) {
-    String uid = context.select((AuthenticationBloc bloc) => bloc.state.user.id.toString());
+    String uid = context.select((AuthenticationBloc bloc) => bloc.state.user.id);
+
     return Scaffold(
       appBar: AppBar(
         title: Text("Bạn bè"),
       ),
       body: Column(
         children: [
-          InkWell(
+          ListTile(
+            leading: FaIcon(FontAwesomeIcons.userPlus),
+            title: Text(
+              "Lời mời kết bạn",
+              style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700),
+            ),
+            trailing: Text(
+              context.watch<CountRequestFriendBloc>().state.count.toString(),
+              style: TextStyle(color: Colors.red, fontSize: 17),
+            ),
             onTap: () {
               Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
                 return ProcessFriendContainer();
               }));
             },
-            child: Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    children: [
-                      FaIcon(FontAwesomeIcons.userPlus),
-                      SizedBox(
-                        width: 5,
-                      ),
-                      Text(
-                        "Lời mời kết bạn",
-                        style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700),
-                      ),
-                    ],
-                  ),
-                  Text(
-                    context.watch<CountRequestFriendBloc>().state.count.toString(),
-                    style: TextStyle(color: Colors.red, fontSize: 17),
-                  ),
-                ],
-              ),
-            ),
           ),
           Divider(
-            height: 10,
+            height: 0,
             thickness: 1,
           ),
           BlocConsumer<FriendBloc, FriendState>(
@@ -78,6 +62,10 @@ class _FriendDisplayScreenState extends State<FriendDisplayScreen> {
                     child: CircularProgressIndicator(),
                   );
                 } else if (state is FriendLoaed) {
+
+                  print("------------");
+                  print(state.friends.toString());
+
                   return Column(
                     children: [
                       ListView.builder(
@@ -94,7 +82,7 @@ class _FriendDisplayScreenState extends State<FriendDisplayScreen> {
                                   if (snapshot.connectionState == ConnectionState.waiting) {
                                     return Text("Loading");
                                   }
-                                  return buildItem(context, snapshot.data, uid);
+                                  return buildItem(context, snapshot.data, uid,index);
                                 });
                           }),
                     ],
@@ -112,7 +100,7 @@ class _FriendDisplayScreenState extends State<FriendDisplayScreen> {
     );
   }
 
-  Widget buildItem(BuildContext context, DocumentSnapshot snapshot, String uid) {
+  Widget buildItem(BuildContext context, DocumentSnapshot snapshot, String uid,int index) {
     if (snapshot.id == uid) {
       return Container();
     } else {
@@ -126,7 +114,7 @@ class _FriendDisplayScreenState extends State<FriendDisplayScreen> {
                     child: Padding(
                       padding: const EdgeInsets.all(5.0),
                       child: Material(
-                        child: snapshot.data()['photoUrl'] != null
+                        child: snapshot.data()['avatar'] != null
                             ? CachedNetworkImage(
                                 placeholder: (context, url) => Container(
                                   child: CircularProgressIndicator(
@@ -137,7 +125,7 @@ class _FriendDisplayScreenState extends State<FriendDisplayScreen> {
                                   height: 50.0,
                                   padding: EdgeInsets.all(15.0),
                                 ),
-                                imageUrl: snapshot.data()['photoUrl'],
+                                imageUrl: snapshot.data()['avatar'],
                                 width: 50.0,
                                 height: 50.0,
                                 fit: BoxFit.cover,
@@ -171,7 +159,11 @@ class _FriendDisplayScreenState extends State<FriendDisplayScreen> {
                       Container(
                         child: Text(
                           snapshot.data()['nickname'],
-                          style: TextStyle(color: primaryColor),
+                          style: TextStyle(
+                            color: primaryColor,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700,
+                          ),
                         ),
                         alignment: Alignment.centerLeft,
                         margin: EdgeInsets.fromLTRB(10.0, 0.0, 0.0, 5.0),
@@ -192,17 +184,16 @@ class _FriendDisplayScreenState extends State<FriendDisplayScreen> {
                           peerUser: UserModel(
                             id: snapshot.id,
                             name: snapshot.data()['nickname'],
-                            avatar: snapshot.data()['photoUrl'],
+                            avatar: snapshot.data()['avatar'],
                             fcmToken: snapshot.data()['pushToken'],
-                            status: snapshot.data()['status'],
-                          ),
+                            status: snapshot.data()['status'], background: snapshot.data()['background'],
+                          ), index: index,
                         )));
           },
-          color: greyColor2,
-          padding: EdgeInsets.fromLTRB(25.0, 10.0, 25.0, 10.0),
+          padding: EdgeInsets.fromLTRB(0.0, 0.0, 10.0, 0.0),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
         ),
-        margin: EdgeInsets.only(bottom: 10.0, left: 5.0, right: 5.0),
+        margin: EdgeInsets.only(bottom: 5.0, left: 5.0, right: 5.0),
       );
     }
   }

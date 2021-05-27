@@ -9,13 +9,19 @@ import 'package:flutter_snap_chat/screen_display/profile_test.dart';
 class ProfileContainer extends StatelessWidget {
   final String uid;
   final UserModel peerUser;
+  final int index;
 
-  const ProfileContainer({Key key,@required this.uid,@required this.peerUser}) : super(key: key);
+  const ProfileContainer({Key key, @required this.uid, @required this.peerUser, @required this.index}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (_) => ProcessContactBloc(ApiContactRepository())..add(ProcessContactGetContactId(uid, peerUser.id)),
-      child: ProfileTest(uid: uid,peerUser: peerUser,),
+      child: ProfileTest(
+        uid: uid,
+        peerUser: peerUser,
+        index: index,
+      ),
     );
   }
 }

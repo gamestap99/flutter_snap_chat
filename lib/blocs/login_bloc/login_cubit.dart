@@ -1,8 +1,5 @@
-
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_snap_chat/blocs/login_bloc/login_state.dart';
-import 'package:flutter_snap_chat/config/app.dart';
 import 'package:flutter_snap_chat/helper/handle_error.dart';
 import 'package:flutter_snap_chat/repositories/user_repository.dart';
 import 'package:flutter_snap_chat/validators/validators.dart';
@@ -39,7 +36,6 @@ class LoginCubit extends Cubit<LoginState> {
         password: state.password.value,
       );
       if (result) {
-
         emit(state.copyWith(status: FormzStatus.submissionSuccess));
       }
     } catch (ex) {

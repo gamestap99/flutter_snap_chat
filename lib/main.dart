@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_snap_chat/blocs/authentication_bloc/bloc.dart';
 import 'package:flutter_snap_chat/blocs/process_contact_bloc/process_contact_bloc.dart';
+import 'package:flutter_snap_chat/blocs/user_model_bloc/user_model_bloc.dart';
 import 'package:flutter_snap_chat/blocs/user_provider_bloc/user_provider_cubit.dart';
 import 'package:flutter_snap_chat/constant/app_color.dart';
 import 'package:flutter_snap_chat/database/user.g.dart';
@@ -16,6 +17,7 @@ import 'package:flutter_snap_chat/router.dart';
 import 'package:flutter_snap_chat/simple_bloc_observer.dart';
 import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart' as path_provider;
+import 'package:timeago/timeago.dart' as timeago;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -25,9 +27,13 @@ void main() async {
   final appDocumentDirectory = await path_provider.getApplicationDocumentsDirectory();
   Hive.init(appDocumentDirectory.path);
   Hive.registerAdapter(UserAdapter());
-  runApp(MyApp(
-    authenticationRepository: AuthenticationRepository(),
-  ));
+  timeago.setLocaleMessages('vi_short', timeago.ViShortMessages());
+
+  runApp(
+    MyApp(
+      authenticationRepository: AuthenticationRepository(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -45,6 +51,9 @@ class MyApp extends StatelessWidget {
           providers: [
             BlocProvider(
               create: (_) => AuthenticationBloc(authenticationRepository: authenticationRepository),
+            ),
+            BlocProvider(
+              create: (_) => UserModelBloc(authenticationRepository: authenticationRepository),
             ),
             BlocProvider(
               create: (_) => ProcessContactBloc(ApiContactRepository()),

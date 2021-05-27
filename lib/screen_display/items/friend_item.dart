@@ -34,7 +34,7 @@ class _FriendItemState extends State<FriendItem> {
           } else {
             idRequest.add(strings[0]);
           }
-        } else if(element.data()[widget.id] == 'success'){
+        } else if (element.data()[widget.id] == 'success') {
           if (strings[0] == widget.id) {
             idFriend.add(strings[1]);
           } else {
@@ -76,31 +76,33 @@ class _FriendItemState extends State<FriendItem> {
         ),
         Container(
           child: Column(
-          children: [
-            Text("Bạn bè"),
-            ListView.builder(
-                shrinkWrap: true,
-                itemCount: idFriend.length,
-                itemBuilder: (context, index) {
-                  return FutureBuilder(
-                      future: FirebaseFirestore.instance.collection("users").doc(idFriend[index]).get(),
-                      builder: (context, snapshot) {
-                        if (snapshot.hasError) {
-                          return Text("Something went wrong");
-                        }
+            children: [
+              Text("Bạn bè"),
+              ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: idFriend.length,
+                  itemBuilder: (context, index) {
+                    return FutureBuilder(
+                        future: FirebaseFirestore.instance.collection("users").doc(idFriend[index]).get(),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasError) {
+                            return Text("Something went wrong");
+                          }
 
-                        if (snapshot.connectionState == ConnectionState.done) {
-                          return itemFriend(snapshot.data);
-                        }
-                        return Text("loading");
-                      });
-                }),
-          ],
-        ),),
+                          if (snapshot.connectionState == ConnectionState.done) {
+                            return itemFriend(snapshot.data);
+                          }
+                          return Text("loading");
+                        });
+                  }),
+            ],
+          ),
+        ),
       ],
     );
   }
-  void acceptRequest(String peerId){
+
+  void acceptRequest(String peerId) {
     String friendId;
     if (widget.id.hashCode <= peerId.hashCode) {
       friendId = '${widget.id}-$peerId';
@@ -108,10 +110,11 @@ class _FriendItemState extends State<FriendItem> {
       friendId = '$peerId-${widget.id}';
     }
     FirebaseFirestore.instance.collection("friends").doc(friendId).update({
-      '${widget.id}' : 'success',
+      '${widget.id}': 'success',
       '$peerId': 'success',
     });
   }
+
   Widget itemRequest(DocumentSnapshot document) {
     return Container(
       child: Row(
@@ -119,25 +122,25 @@ class _FriendItemState extends State<FriendItem> {
           Material(
             child: document.data()['photoUrl'] != null
                 ? CachedNetworkImage(
-              placeholder: (context, url) => Container(
-                child: CircularProgressIndicator(
-                  strokeWidth: 1.0,
-                  valueColor: AlwaysStoppedAnimation<Color>(themeColor),
-                ),
-                width: 50.0,
-                height: 50.0,
-                padding: EdgeInsets.all(15.0),
-              ),
-              imageUrl: document.data()['photoUrl'],
-              width: 50.0,
-              height: 50.0,
-              fit: BoxFit.cover,
-            )
+                    placeholder: (context, url) => Container(
+                      child: CircularProgressIndicator(
+                        strokeWidth: 1.0,
+                        valueColor: AlwaysStoppedAnimation<Color>(themeColor),
+                      ),
+                      width: 50.0,
+                      height: 50.0,
+                      padding: EdgeInsets.all(15.0),
+                    ),
+                    imageUrl: document.data()['photoUrl'],
+                    width: 50.0,
+                    height: 50.0,
+                    fit: BoxFit.cover,
+                  )
                 : Icon(
-              Icons.account_circle,
-              size: 50.0,
-              color: greyColor,
-            ),
+                    Icons.account_circle,
+                    size: 50.0,
+                    color: greyColor,
+                  ),
             borderRadius: BorderRadius.all(Radius.circular(25.0)),
             clipBehavior: Clip.hardEdge,
           ),
@@ -182,6 +185,7 @@ class _FriendItemState extends State<FriendItem> {
       ),
     );
   }
+
   Widget itemFriend(DocumentSnapshot document) {
     return Container(
       child: Row(
@@ -189,25 +193,25 @@ class _FriendItemState extends State<FriendItem> {
           Material(
             child: document.data()['photoUrl'] != null
                 ? CachedNetworkImage(
-              placeholder: (context, url) => Container(
-                child: CircularProgressIndicator(
-                  strokeWidth: 1.0,
-                  valueColor: AlwaysStoppedAnimation<Color>(themeColor),
-                ),
-                width: 50.0,
-                height: 50.0,
-                padding: EdgeInsets.all(15.0),
-              ),
-              imageUrl: document.data()['photoUrl'],
-              width: 50.0,
-              height: 50.0,
-              fit: BoxFit.cover,
-            )
+                    placeholder: (context, url) => Container(
+                      child: CircularProgressIndicator(
+                        strokeWidth: 1.0,
+                        valueColor: AlwaysStoppedAnimation<Color>(themeColor),
+                      ),
+                      width: 50.0,
+                      height: 50.0,
+                      padding: EdgeInsets.all(15.0),
+                    ),
+                    imageUrl: document.data()['photoUrl'],
+                    width: 50.0,
+                    height: 50.0,
+                    fit: BoxFit.cover,
+                  )
                 : Icon(
-              Icons.account_circle,
-              size: 50.0,
-              color: greyColor,
-            ),
+                    Icons.account_circle,
+                    size: 50.0,
+                    color: greyColor,
+                  ),
             borderRadius: BorderRadius.all(Radius.circular(25.0)),
             clipBehavior: Clip.hardEdge,
           ),
@@ -233,5 +237,3 @@ class _FriendItemState extends State<FriendItem> {
     );
   }
 }
-
-

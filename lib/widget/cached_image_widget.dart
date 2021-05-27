@@ -10,17 +10,16 @@ class CachedImageWidget extends StatelessWidget {
 
   final BoxFit fit;
 
-  final String noImageAvailable =
-      "https://www.esm.rochester.edu/uploads/NoPhotoAvailable.jpg";
+  final String noImageAvailable = "https://www.esm.rochester.edu/uploads/NoPhotoAvailable.jpg";
 
   CachedImageWidget(
-      this.imageUrl, {
-        this.isRound = false,
-        this.radius = 0,
-        this.height,
-        this.width,
-        this.fit = BoxFit.cover,
-      });
+    this.imageUrl, {
+    this.isRound = false,
+    this.radius = 0,
+    this.height,
+    this.width,
+    this.fit = BoxFit.cover,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -33,8 +32,7 @@ class CachedImageWidget extends StatelessWidget {
             child: CachedNetworkImage(
               imageUrl: imageUrl,
               fit: fit,
-              placeholder: (context, url) =>
-                  Center(child: CircularProgressIndicator()),
+              placeholder: (context, url) => Center(child: CircularProgressIndicator()),
               errorWidget: (context, url, error) => Image.network(
                 noImageAvailable,
                 height: 25,

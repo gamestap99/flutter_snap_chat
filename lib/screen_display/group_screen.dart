@@ -18,28 +18,21 @@ class _GroupScreenState extends State<GroupScreen> {
   @override
   Widget build(BuildContext context) {
     String uid = context.select((FriendProviderCubit bloc) => bloc.state.userModel.id.toString());
-    print("uid group" + uid);
+
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: Text("Nhóm chat"),
       ),
       body: BlocConsumer<AddSearchNameBloc, AddSearchNameState>(
           builder: (context, state) {
             return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                InkWell(
-                  child: Card(
-                    child: Padding(
-                      padding: const EdgeInsets.fromLTRB(10.0, 15, 10, 15),
-                      child: Row(
-                        children: [
-                          Icon(Icons.group_add),
-                          Text("Tạo nhóm mới"),
-                        ],
-                      ),
-                    ),
-                  ),
-                  onTap: () {
+                ListTile(
+                  leading: Icon(Icons.group_add),
+                  title: Text("Tạo nhóm mới"),
+                  onTap: (){
                     if (state is AddSearchNameLoaded) {
                       Navigator.of(context).push(CupertinoPageRoute(builder: (_) {
                         return AddGroupDisplayScreen(
@@ -49,11 +42,19 @@ class _GroupScreenState extends State<GroupScreen> {
                     }
                   },
                 ),
-                SizedBox(
-                  height: 10,
+                Divider(height: 0,),
+
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(15,10,10,10),
+                  child: Text("Nhóm của bạn",style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                  ),),
                 ),
-                _ListItem(
-                  uid: uid,
+                Flexible(
+                  child: _ListItem(
+                    uid: uid,
+                  ),
                 ),
               ],
             );
@@ -100,7 +101,9 @@ class _ListItem extends StatelessWidget {
                       photo: snapshot.data.docs[index]['roomImage'],
                       type: snapshot.data.docs[index]['type'],
                       member: List<String>.from(snapshot.data.docs[index]['member']),
+                      createdAt: snapshot.data.docs[index]['created_at'],
                     ),
+                    createdAt: snapshot.data.docs[index]['created_at'],
                   );
                 })
             : Container(

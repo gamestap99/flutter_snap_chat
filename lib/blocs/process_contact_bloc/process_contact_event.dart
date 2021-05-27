@@ -34,30 +34,33 @@ class ProcessContactAddContact extends ProcessContactEvent {
   // TODO: implement props
   List<Object> get props => [uid, peerId];
 }
-class ProcessContactDeleteContact extends ProcessContactEvent{
+
+class ProcessContactDeleteContact extends ProcessContactEvent {
   final String contactId;
 
   ProcessContactDeleteContact(this.contactId);
+
   @override
   // TODO: implement props
   List<Object> get props => [contactId];
-
 }
-class ProcessContactAcpectContact extends ProcessContactEvent{
+
+class ProcessContactAcpectContact extends ProcessContactEvent {
   final String contactId;
 
   ProcessContactAcpectContact(this.contactId);
+
   @override
   // TODO: implement props
   List<Object> get props => [contactId];
-
 }
-class ProcessContactAddContactById extends ProcessContactEvent{
+
+class ProcessContactAddContactById extends ProcessContactEvent {
   final String contactId;
 
   ProcessContactAddContactById(this.contactId);
+
   @override
   // TODO: implement props
   List<Object> get props => [contactId];
-
 }

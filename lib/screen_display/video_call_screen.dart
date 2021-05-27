@@ -1,14 +1,13 @@
-import 'package:flutter/material.dart';
 import 'package:agora_rtc_engine/rtc_engine.dart';
 import 'package:agora_rtc_engine/rtc_local_view.dart' as RtcLocalView;
 import 'package:agora_rtc_engine/rtc_remote_view.dart' as RtcRemoteView;
+import 'package:flutter/material.dart';
 import 'package:flutter_snap_chat/config/app.dart';
 
 class CallPage extends StatefulWidget {
   final String channelName;
 
   const CallPage({Key key, this.channelName}) : super(key: key);
-
 
   @override
   _CallPageState createState() => _CallPageState();
@@ -200,32 +199,26 @@ class _CallPageState extends State<CallPage> {
       case 1:
         return Container(
             child: Column(
-              children: <Widget>[_videoView(views[0])],
-            ));
+          children: <Widget>[_videoView(views[0])],
+        ));
       case 2:
         return Container(
             child: Column(
-              children: <Widget>[
-                _expandedVideoRow([views[0]]),
-                _expandedVideoRow([views[1]])
-              ],
-            ));
+          children: <Widget>[
+            _expandedVideoRow([views[0]]),
+            _expandedVideoRow([views[1]])
+          ],
+        ));
       case 3:
         return Container(
             child: Column(
-              children: <Widget>[
-                _expandedVideoRow(views.sublist(0, 2)),
-                _expandedVideoRow(views.sublist(2, 3))
-              ],
-            ));
+          children: <Widget>[_expandedVideoRow(views.sublist(0, 2)), _expandedVideoRow(views.sublist(2, 3))],
+        ));
       case 4:
         return Container(
             child: Column(
-              children: <Widget>[
-                _expandedVideoRow(views.sublist(0, 2)),
-                _expandedVideoRow(views.sublist(2, 4))
-              ],
-            ));
+          children: <Widget>[_expandedVideoRow(views.sublist(0, 2)), _expandedVideoRow(views.sublist(2, 4))],
+        ));
       default:
     }
     return Container();

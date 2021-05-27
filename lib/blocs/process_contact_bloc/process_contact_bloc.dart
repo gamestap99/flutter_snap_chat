@@ -12,32 +12,34 @@ class ProcessContactBloc extends Bloc<ProcessContactEvent, ProcessContactState> 
         super(ProcessContactLoading());
   final ContactRepository _contactRepository;
   StreamSubscription<ContactModel> _streamSubscription;
+
   @override
-  Stream<ProcessContactState> mapEventToState(ProcessContactEvent event)async* {
-    try{
-      if(event is ProcessContactGetContactId){
-        final contactId =await _contactRepository.getContactId(event.uid, event.peerId);
+  Stream<ProcessContactState> mapEventToState(ProcessContactEvent event) async* {
+    try {
+      if (event is ProcessContactGetContactId) {
+        final contactId = await _contactRepository.getContactId(event.uid, event.peerId);
         _streamSubscription = _contactRepository.contact(contactId).listen((event) {
           add(ProcessContactDataChanged(event));
         });
-      }else if(event is ProcessContactDataChanged){
+      } else if (event is ProcessContactDataChanged) {
         yield ProcessContactLoaded(contactModel: event.contactModel);
-      }else if(event is ProcessContactAddContact){
-        final newContactId =await _contactRepository.addContact(event.uid, event.peerId, "1");
+      } else if (event is ProcessContactAddContact) {
+        final newContactId = await _contactRepository.addContact(event.uid, event.peerId, "1");
         _streamSubscription = _contactRepository.contact(newContactId).listen((event) {
           add(ProcessContactDataChanged(event));
         });
-      }else if(event is ProcessContactAcpectContact ){
+      } else if (event is ProcessContactAcpectContact) {
         await _contactRepository.acpectContact(event.contactId);
-      }else if(event is ProcessContactDeleteContact){
+      } else if (event is ProcessContactDeleteContact) {
         await _contactRepository.deleteContact(event.contactId);
-      }else if(event is ProcessContactAddContactById){
+      } else if (event is ProcessContactAddContactById) {
         await _contactRepository.addContactById(event.contactId);
       }
-    }catch(ex){
+    } catch (ex) {
       yield ProcessContactLoadFailure();
     }
   }
+
   @override
   Future<void> close() {
     _streamSubscription?.cancel();

@@ -30,9 +30,9 @@ class ApiContactRepository implements ContactRepository {
         (e) => UserModel(
           id: e.id,
           name: e.data()['nickname'],
-          avatar: e.data()['photoUrl'],
+          avatar: e.data()['avatar'],
           status: e.data()['status'],
-          fcmToken: e.data()['pushToken'],
+          fcmToken: e.data()['pushToken'], background: e.data()['background'],
         ),
       ),
     );
@@ -46,13 +46,12 @@ class ApiContactRepository implements ContactRepository {
         'senderId': uId,
         'receiverId': peerId,
         'status': status,
-        'merge':[uId,peerId],
+        'merge': [uId, peerId],
         'created_at': DateTime.now().toString(),
       });
       return reference.id;
     } catch (ex) {
       throw Exception('Add contact thất bại!');
-
     }
   }
 
@@ -112,9 +111,9 @@ class ApiContactRepository implements ContactRepository {
         (e) => UserModel(
           id: e.id,
           name: e.data()['nickname'],
-          avatar: e.data()['photoUrl'],
+          avatar: e.data()['avatar'],
           fcmToken: e.data()['pushToken'],
-          status: e.data()['status'],
+          status: e.data()['status'], background: e.data()['background'],
         ),
       ),
     );

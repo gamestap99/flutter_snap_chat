@@ -20,7 +20,7 @@ class UserModel extends Equatable {
   final String background;
 
   /// Empty user which represents an unauthenticated user.
-  static const empty = UserModel(id: '', name: null, avatar: null, fcmToken: null, status: null,background: null);
+  static const empty = UserModel(id: '', name: null, avatar: null, fcmToken: null, status: null, background: null);
 
   UserModel.fromSnapShot(DocumentSnapshot documentSnapshot)
       : id = documentSnapshot.id,
@@ -30,7 +30,6 @@ class UserModel extends Equatable {
         status = documentSnapshot.data()['status'],
         fcmToken = documentSnapshot.data()['pushToken'];
 
-
   @override
-  List<Object> get props => [id, name, avatar, fcmToken, status,background];
+  List<Object> get props => [id, name, avatar, fcmToken, status, background];
 }

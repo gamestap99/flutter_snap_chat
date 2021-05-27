@@ -6,13 +6,10 @@ import 'package:flutter_snap_chat/models/user_model.dart';
 import 'package:flutter_snap_chat/repositories/call_repository.dart';
 import 'package:flutter_snap_chat/screen_display/callscreens/call_screen.dart';
 
-
 class CallUtils {
   static final CallRepository callMethods = CallRepository();
 
-  static dial({UserModel from, UserModel to, context,String roomId}) async {
-
-
+  static dial({UserModel from, UserModel to, context, String roomId}) async {
     CallModel call = CallModel(
       callerId: from.id,
       callerName: from.name,
@@ -38,8 +35,6 @@ class CallUtils {
     call.hasDialled = true;
 
     if (callMade) {
-
-
       Navigator.push(
         context,
         MaterialPageRoute(

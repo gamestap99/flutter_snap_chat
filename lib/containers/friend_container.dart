@@ -8,10 +8,10 @@ import 'package:flutter_snap_chat/screen_display/friend_display_screen.dart';
 class FriendContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    String uid = context.select((FriendProviderCubit bloc) => bloc.state.userModel.id.toString());
-    print("friend uid" + uid);
+    String uid = context.select((FriendProviderCubit bloc) => bloc.state.userModel.id);
+    print("friend uid " + uid);
     return BlocProvider(
-      create: (_) => FriendBloc(friendRepository: ApiFriendRepository(), uid:uid),
+      create: (_) => FriendBloc(friendRepository: ApiFriendRepository(), uid: uid),
       child: FriendDisplayScreen(),
     );
   }

@@ -23,5 +23,5 @@ class ChatModel extends Equatable {
 
   @override
   // TODO: implement props
-  List<Object> get props => [content, createdAt, file, roomId, senderId,type];
+  List<Object> get props => [content, createdAt, file, roomId, senderId, type];
 }

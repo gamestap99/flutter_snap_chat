@@ -1,5 +1,5 @@
-class HandleError{
-  static String authError(String code){
+class HandleError {
+  static String authError(String code) {
     switch (code) {
       case "invalid-email":
         return "Your email address appears to be malformed.";

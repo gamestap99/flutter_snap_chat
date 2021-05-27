@@ -1,8 +1,6 @@
-
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_snap_chat/constant/app_color.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -14,7 +12,8 @@ class MessageInput extends StatefulWidget {
   final String id;
   final String peerAvatar;
 
-  const MessageInput({Key key,@required this.roomId,@required this.peerId,@required this.id,@required this.peerAvatar}) : super(key: key);
+  const MessageInput({Key key, @required this.roomId, @required this.peerId, @required this.id, @required this.peerAvatar}) : super(key: key);
+
   @override
   _MessageInputState createState() => _MessageInputState();
 }
@@ -29,7 +28,6 @@ class _MessageInputState extends State<MessageInput> {
   bool isLoading;
   bool isShowSticker;
   String imageUrl;
-
 
   _scrollListener() {
     if (listScrollController.offset >= listScrollController.position.maxScrollExtent && !listScrollController.position.outOfRange) {
@@ -53,6 +51,7 @@ class _MessageInputState extends State<MessageInput> {
     super.initState();
     listScrollController.addListener(_scrollListener);
   }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -119,6 +118,7 @@ class _MessageInputState extends State<MessageInput> {
       decoration: BoxDecoration(border: Border(top: BorderSide(color: greyColor2, width: 0.5)), color: Colors.white),
     );
   }
+
   void onSendMessage(String content, int type, {File file}) {
     // type: 0 = text, 1 = image, 2 = sticker
     if (content.trim() != '') {
@@ -152,7 +152,6 @@ class _MessageInputState extends State<MessageInput> {
           //   }]),
           // });
         });
-
       } else {
         CollectionReference messages = FirebaseFirestore.instance.collection('messages');
         CollectionReference documentReference = FirebaseFirestore.instance.collection('rooms');
@@ -172,6 +171,7 @@ class _MessageInputState extends State<MessageInput> {
       Fluttertoast.showToast(msg: 'Asss', backgroundColor: Colors.black, textColor: Colors.red);
     }
   }
+
   Future getImage() async {
     ImagePicker imagePicker = ImagePicker();
     PickedFile pickedFile;
@@ -194,23 +194,22 @@ class _MessageInputState extends State<MessageInput> {
       isShowSticker = !isShowSticker;
     });
   }
-  // Future uploadFile() async {
-  //   String fileName = DateTime.now().millisecondsSinceEpoch.toString();
-  //   StorageReference reference = FirebaseStorage.instance.ref().child(fileName);
-  //   StorageUploadTask uploadTask = reference.putFile(imageFile);
-  //   StorageTaskSnapshot storageTaskSnapshot = await uploadTask.onComplete;
-  //   storageTaskSnapshot.ref.getDownloadURL().then((downloadUrl) {
-  //     imageUrl = downloadUrl;
-  //     setState(() {
-  //       isLoading = false;
-  //       onSendMessage(imageUrl, 1);
-  //     });
-  //   }, onError: (err) {
-  //     setState(() {
-  //       isLoading = false;
-  //     });
-  //     Fluttertoast.showToast(msg: 'This file is not an image');
-  //   });
-  // }
+// Future uploadFile() async {
+//   String fileName = DateTime.now().millisecondsSinceEpoch.toString();
+//   StorageReference reference = FirebaseStorage.instance.ref().child(fileName);
+//   StorageUploadTask uploadTask = reference.putFile(imageFile);
+//   StorageTaskSnapshot storageTaskSnapshot = await uploadTask.onComplete;
+//   storageTaskSnapshot.ref.getDownloadURL().then((downloadUrl) {
+//     imageUrl = downloadUrl;
+//     setState(() {
+//       isLoading = false;
+//       onSendMessage(imageUrl, 1);
+//     });
+//   }, onError: (err) {
+//     setState(() {
+//       isLoading = false;
+//     });
+//     Fluttertoast.showToast(msg: 'This file is not an image');
+//   });
+// }
 }
-

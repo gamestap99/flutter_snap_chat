@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_snap_chat/blocs/add_search_name_bloc/add_search_name_bloc.dart';
 import 'package:flutter_snap_chat/blocs/authentication_bloc/bloc.dart';
-import 'package:flutter_snap_chat/blocs/friend_bloc/bloc.dart';
 import 'package:flutter_snap_chat/repositories/friend_repository.dart';
-
 import 'package:flutter_snap_chat/screen_display/add_search_name_screen.dart';
 
 class AddSearchNameChatContainer extends StatelessWidget {

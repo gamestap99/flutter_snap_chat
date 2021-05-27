@@ -2,8 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_snap_chat/blocs/sign_up_bloc/sign_up_cubit.dart';
+import 'package:flutter_snap_chat/blocs/user_provider_bloc/user_provider_cubit.dart';
+import 'package:flutter_snap_chat/constant/app_color.dart';
 import 'package:flutter_snap_chat/router.dart';
-import 'package:flutter_snap_chat/screen_display/settings.dart';
 import 'package:formz/formz.dart';
 
 class SignUpForm extends StatelessWidget {
@@ -22,8 +23,10 @@ class SignUpForm extends StatelessWidget {
           //   return ChatSettings();
           // }));
 
+
+
           Navigator.of(context).pushNamedAndRemoveUntil(
-            AppRoutes.init,
+            AppRoutes.control,
             (route) => false,
           );
         }
@@ -85,7 +88,7 @@ class _EmailInput extends StatelessWidget {
           decoration: InputDecoration(
             labelText: 'Email',
             helperText: '',
-            errorText: state.email.invalid ? 'invalid email' : null,
+            errorText: state.email.invalid ? 'Email không hợp lệ' : null,
           ),
         );
       },
@@ -127,7 +130,7 @@ class _ConfirmPasswordInput extends StatelessWidget {
           decoration: InputDecoration(
             labelText: 'Xác nhận mật khẩu',
             helperText: '',
-            errorText: state.confirmedPassword.invalid ? 'passwords do not match' : null,
+            errorText: state.confirmedPassword.invalid ? 'Mật khẩu nhập chưa giống nhau' : null,
           ),
         );
       },
@@ -149,8 +152,9 @@ class _SignUpButton extends StatelessWidget {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(30.0),
                 ),
-                color: Colors.orangeAccent,
-                onPressed: state.status.isValidated ? () => context.read<SignUpCubit>().signUpFormSubmitted() : null,
+                color: primaryColor,
+                textColor: Colors.white,
+                onPressed: state.status.isValidated ? () => context.read<SignUpCubit>().signUpFormSubmitted(context.read<FriendProviderCubit>()) : null,
               );
       },
     );

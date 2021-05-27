@@ -1,12 +1,9 @@
 import 'dart:async';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_snap_chat/blocs/add_search_name_bloc/add_search_name_event.dart';
 import 'package:flutter_snap_chat/blocs/add_search_name_bloc/add_search_name_state.dart';
 import 'package:flutter_snap_chat/models/contact_model.dart';
-import 'package:flutter_snap_chat/models/friend_model.dart';
-import 'package:flutter_snap_chat/models/user_model.dart';
 import 'package:flutter_snap_chat/repositories/friend_repository.dart';
 
 class AddSearchNameBloc extends Bloc<AddSearchNameEvent, AddSearchNameState> {
@@ -31,19 +28,16 @@ class AddSearchNameBloc extends Bloc<AddSearchNameEvent, AddSearchNameState> {
     }
   }
 
-  Stream<AddSearchNameState> _mapGetFriend(AddSeachNameGetData event) async*{
-    try{
-
-       final data = _friendRepository.getIdFriends(event.contacts,uid);
-       final users =await _friendRepository.getUsers(data);
-       yield AddSearchNameLoaded(users);
-
-
-
-    }catch(ex){
+  Stream<AddSearchNameState> _mapGetFriend(AddSeachNameGetData event) async* {
+    try {
+      final data = _friendRepository.getIdFriends(event.contacts, uid);
+      final users = await _friendRepository.getUsers(data);
+      yield AddSearchNameLoaded(users);
+    } catch (ex) {
       yield AddSearchNameLoadFailure(ex.toString());
     }
   }
+
   @override
   Future<void> close() {
     _streamSubscription?.cancel();

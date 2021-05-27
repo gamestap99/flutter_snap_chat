@@ -10,7 +10,7 @@ class ContactChat extends StatefulWidget {
   final String name;
   final String id;
 
-  const ContactChat({Key key,@required this.peerID,@required this.perAvatar,@required this.name,@required this.id}) : super(key: key);
+  const ContactChat({Key key, @required this.peerID, @required this.perAvatar, @required this.name, @required this.id}) : super(key: key);
 
   @override
   _ContactChatState createState() => _ContactChatState();
@@ -54,25 +54,24 @@ class _ContactChatState extends State<ContactChat> {
   Future<void> getContact() async {
     FirebaseFirestore.instance.collection('rooms').get().then((value) {
       value.docs.forEach((element) {
-          if((element.data()["member"][0] == widget.id || element.data()["member"][0] ==widget.peerID) &&(element.data()["member"][1] == widget.id || element.data()["member"][1] ==widget.peerID)){
-            setState(() {
-              roomId=element.id;
-              isLoading=false;
-              return;
-            });
-          }
-          else{
-            setState(() {
-              roomId="";
-            });
-          }
+        if ((element.data()["member"][0] == widget.id || element.data()["member"][0] == widget.peerID) && (element.data()["member"][1] == widget.id || element.data()["member"][1] == widget.peerID)) {
+          setState(() {
+            roomId = element.id;
+            isLoading = false;
+            return;
+          });
+        } else {
+          setState(() {
+            roomId = "";
+          });
+        }
       });
       setState(() {
-        isLoading=false;
+        isLoading = false;
       });
-    }).catchError((ex,stracke){
+    }).catchError((ex, stracke) {
       setState(() {
-        isLoading=false;
+        isLoading = false;
       });
     });
   }
@@ -80,47 +79,51 @@ class _ContactChatState extends State<ContactChat> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-
-      ),
-      body: !isLoading ? Stack(
-        children: [
-          Column(
-            // mainAxisSize: MainAxisSize.min,
-            children: [
-              Expanded(
-                child: Container(
-                  child: StreamBuilder(
-                    stream: FirebaseFirestore.instance.collection("messages").where('room_id', isEqualTo: roomId).orderBy("created_at",descending: true).snapshots(),
-                    builder: (context, snapshot) {
-                      if (!snapshot.hasData) {
-                        return Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(themeColor)));
-                      } else {
-                        listMessage.addAll(snapshot.data.documents);
-                        return ListView.builder(
-                          shrinkWrap: true,
-                          padding: EdgeInsets.all(10.0),
-                          itemBuilder: (context, index) {
-                            return MessageItem(index: index,
-                              document: snapshot.data.documents[index],
-                              id: widget.id,
-                              perAvatar: widget.perAvatar,
-                              listMessage: listMessage,);
+      appBar: AppBar(),
+      body: !isLoading
+          ? Stack(
+              children: [
+                Column(
+                  // mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Expanded(
+                      child: Container(
+                        child: StreamBuilder(
+                          stream: FirebaseFirestore.instance.collection("messages").where('room_id', isEqualTo: roomId).orderBy("created_at", descending: true).snapshots(),
+                          builder: (context, snapshot) {
+                            if (!snapshot.hasData) {
+                              return Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(themeColor)));
+                            } else {
+                              listMessage.addAll(snapshot.data.documents);
+                              return ListView.builder(
+                                shrinkWrap: true,
+                                padding: EdgeInsets.all(10.0),
+                                itemBuilder: (context, index) {
+                                  return MessageItem(
+                                    index: index,
+                                    document: snapshot.data.documents[index],
+                                    id: widget.id,
+                                    perAvatar: widget.perAvatar,
+                                    listMessage: listMessage,
+                                  );
+                                },
+                                itemCount: snapshot.data.documents.length,
+                                reverse: true,
+                                controller: listScrollController,
+                              );
+                            }
                           },
-                          itemCount: snapshot.data.documents.length,
-                          reverse: true,
-                          controller: listScrollController,
-                        );
-                      }
-                    },
-                  ),
+                        ),
+                      ),
+                    ),
+                    MessageInput(roomId: roomId, peerId: widget.peerID, id: widget.id, peerAvatar: widget.perAvatar),
+                  ],
                 ),
-              ),
-              MessageInput(roomId: roomId, peerId: widget.peerID, id:widget.id, peerAvatar: widget.perAvatar),
-            ],
-          ),
-        ],
-      ) : Center(child: CircularProgressIndicator(),),
+              ],
+            )
+          : Center(
+              child: CircularProgressIndicator(),
+            ),
     );
   }
 }

@@ -1,11 +1,10 @@
+import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_snap_chat/models/call_model.dart';
 import 'package:flutter_snap_chat/repositories/call_repository.dart';
 import 'package:flutter_snap_chat/screen_display/callscreens/call_screen.dart';
 import 'package:flutter_snap_chat/utils/permissions.dart';
-import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:flutter_snap_chat/widget/cached_image_widget.dart';
-
 
 class PickupScreen extends StatefulWidget {
   final CallModel call;
@@ -20,6 +19,7 @@ class PickupScreen extends StatefulWidget {
 
 class _PickupScreenState extends State<PickupScreen> {
   final CallRepository callMethods = CallRepository();
+
   // final LogRepository logRepository = LogRepository(isHive: true);
   // final LogRepository logRepository = LogRepository(isHive: false);
 
@@ -43,7 +43,7 @@ class _PickupScreenState extends State<PickupScreen> {
     // TODO: implement initState
     super.initState();
 
-    AssetsAudioPlayer().open(Audio("assets/audios/call.mp3"),autoStart: true);
+    AssetsAudioPlayer().open(Audio("assets/audios/call.mp3"), autoStart: true);
   }
 
   @override
@@ -93,7 +93,7 @@ class _PickupScreenState extends State<PickupScreen> {
                   onPressed: () async {
                     isCallMissed = false;
                     // addToLocalStorage(callStatus: CALL_STATUS_RECEIVED);
-                    await callMethods.endCall(call: widget.call,log: "reject");
+                    await callMethods.endCall(call: widget.call, log: "reject");
                   },
                 ),
                 SizedBox(width: 25),
@@ -107,8 +107,7 @@ class _PickupScreenState extends State<PickupScreen> {
                           ? Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) =>
-                                    CallScreen(call: widget.call),
+                                builder: (context) => CallScreen(call: widget.call),
                               ),
                             )
                           : {};

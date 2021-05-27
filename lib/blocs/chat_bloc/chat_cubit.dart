@@ -7,6 +7,7 @@ import 'package:meta/meta.dart';
 class ChatCubit extends Cubit<ChatState> {
   final ChatRepository repository;
   final FriendRepository friendRepository;
+
   ChatCubit({
     @required this.repository,
     @required this.friendRepository,
@@ -20,14 +21,14 @@ class ChatCubit extends Cubit<ChatState> {
   //     emit(ChatLoadFailue(error: e));
   //   }
   // }
-    Future<void> getUser(List<String> member,String uid) async {
-        try{
-          print("member:" + member.length.toString());
-          final data = await friendRepository.getUsers(member);
-          emit(ChatLoaded(users: data));
-        }catch(ex){
-          print("errorr: "+ex.toString());
-          emit(ChatLoadFailue(error: ex.toString()));
-        }
+  Future<void> getUser(List<String> member, String uid) async {
+    try {
+      print("member:" + member.length.toString());
+      final data = await friendRepository.getUsers(member);
+      emit(ChatLoaded(users: data));
+    } catch (ex) {
+      print("errorr: " + ex.toString());
+      emit(ChatLoadFailue(error: ex.toString()));
     }
+  }
 }

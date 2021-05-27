@@ -38,16 +38,16 @@ class FriendBloc extends Bloc<FriendEvent, FriendState> {
   Stream<FriendState> _mapAuthenticationUserChangedToState(
     FriendDataChange event,
   ) async* {
-    try{
-      if(event.contacts.length > 0 ){
+    try {
+      if (event.contacts.length > 0) {
         print("data");
-        List<String> users= _friendRepository.getIdFriends(event.contacts,uid);
+        List<String> users = _friendRepository.getIdFriends(event.contacts, uid);
         // final count =await _friendRepository.getCountAcpectFriend(uid);
         yield FriendLoaed(users);
-      }else{
+      } else {
         yield FriendLoadFail();
       }
-    }catch(e){
+    } catch (e) {
       yield FriendLoadFail();
     }
   }

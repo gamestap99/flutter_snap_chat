@@ -9,8 +9,6 @@ import 'package:flutter_snap_chat/utils/firebase_collection.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:meta/meta.dart';
 
-
-
 /// Thrown if during the sign up process if a failure occurs.
 class SignUpFailure implements Exception {}
 
@@ -23,7 +21,6 @@ class LogInWithGoogleFailure implements Exception {}
 /// Thrown during the logout process if a failure occurs.
 class LogOutFailure implements Exception {}
 
-
 class AuthenticationRepository {
   /// {@macro authentication_repository}
   AuthenticationRepository({
@@ -35,17 +32,16 @@ class AuthenticationRepository {
   final firebase_auth.FirebaseAuth _firebaseAuth;
   final GoogleSignIn _googleSignIn;
 
-
   Future<UserFirebase> getCurrentUser() async {
     UserFirebase currentUser;
-    currentUser =  _firebaseAuth.currentUser.toUser;
+    currentUser = _firebaseAuth.currentUser.toUser;
     return currentUser;
   }
 
   Future<UserModel> getUserDetails() async {
     UserFirebase currentUser = await getCurrentUser();
 
-    DocumentSnapshot documentSnapshot =await FirebaseCollection().userCollection.doc(currentUser.id).get();
+    DocumentSnapshot documentSnapshot = await FirebaseCollection().userCollection.doc(currentUser.id).get();
 
     return UserModel.fromSnapShot(documentSnapshot);
   }
@@ -59,34 +55,31 @@ class AuthenticationRepository {
   /// Creates a new user with the provided [email] and [password].
   ///
   /// Throws a [SignUpFailure] if an exception occurs.
-  Future<void> signUpFireBase({
+  Future<UserFirebase> signUpFireBase({
     @required String email,
     @required String password,
     @required String name,
   }) async {
     assert(email != null && password != null);
-    try {
-      await _firebaseAuth.createUserWithEmailAndPassword(
-        email: email,
-        password: password,
-      ).then((value) {
-        print("dd");
-        print(value.toString());
+    firebase_auth.User user;
 
-        FirebaseFirestore.instance.collection('users').doc(value.user.uid).set({
-            "nickname":name,
-            "avatar":noAvatar,
-            "background":noImageAvailable,
-            "status":"0",
-            "pushToken":null,
+    try {
+        firebase_auth.UserCredential userCredential   = await _firebaseAuth.createUserWithEmailAndPassword(email: email, password: password);
+
+
+        await FirebaseFirestore.instance.collection('users').doc(userCredential.user.uid).set({
+          "nickname": name,
+          "avatar": noAvatar,
+          "background": noImageAvailable,
+          "status": "0",
+          "pushToken": null,
         });
 
-      });
+      return userCredential.user.toUser;
     } on Exception {
       throw SignUpFailure();
     }
   }
-
 
   Future<void> logInWithGoogle() async {
     try {
@@ -111,15 +104,13 @@ class AuthenticationRepository {
   }) async {
     assert(email != null && password != null);
 
-     var result = await _firebaseAuth.signInWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
+    var result = await _firebaseAuth.signInWithEmailAndPassword(
+      email: email,
+      password: password,
+    );
 
-     return result.user != null;
-
+    return result.user != null;
   }
-
 
   Future<void> logOut() async {
     try {

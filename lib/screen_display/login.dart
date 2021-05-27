@@ -1,12 +1,11 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_snap_chat/blocs/authentication_bloc/authentication_bloc.dart';
 import 'package:flutter_snap_chat/blocs/login_bloc/bloc.dart';
 import 'package:flutter_snap_chat/blocs/user_provider_bloc/user_provider_cubit.dart';
 import 'package:flutter_snap_chat/router.dart';
 import 'package:flutter_snap_chat/screen_display/sign_up_page.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:formz/formz.dart';
 
 class LoginScreen extends StatelessWidget {
@@ -19,11 +18,10 @@ class LoginScreen extends StatelessWidget {
       body: BlocListener<LoginCubit, LoginState>(
         listener: (context, state) {
           if (state.status.isSubmissionFailure) {
-            _onShowDialog(context,state.errorMessage);
-          }
-          else if(state.status.isSubmissionSuccess){
+            _onShowDialog(context, state.errorMessage);
+          } else if (state.status.isSubmissionSuccess) {
             context.read<FriendProviderCubit>().getUser(context.read<AuthenticationBloc>().state.user.id);
-            Navigator.of(context).pushNamedAndRemoveUntil(AppRoutes.control, (route) => false);
+            Navigator.of(context).popAndPushNamed(AppRoutes.control);
           }
         },
         child: Align(
@@ -38,12 +36,12 @@ class LoginScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 16.0),
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(10,0,10,0),
+                  padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
                   child: _EmailInput(),
                 ),
                 const SizedBox(height: 8.0),
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(10,0,10,0),
+                  padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
                   child: _PasswordInput(),
                 ),
                 const SizedBox(height: 8.0),
@@ -60,10 +58,10 @@ class LoginScreen extends StatelessWidget {
     );
   }
 
-  void _onShowDialog(BuildContext context,String message){
+  void _onShowDialog(BuildContext context, String message) {
     Widget okButton = FlatButton(
       child: Text("Thử lại"),
-      onPressed: () =>Navigator.pop(context),
+      onPressed: () => Navigator.pop(context),
     );
 
     // set up the AlertDialog
@@ -98,7 +96,7 @@ class _EmailInput extends StatelessWidget {
           decoration: InputDecoration(
             labelText: 'Email',
             helperText: '',
-            errorText: state.email.invalid ? 'invalid email' : null,
+            errorText: state.email.invalid ? 'Email không hợp lệ' : null,
           ),
         );
       },
@@ -149,24 +147,6 @@ class _LoginButton extends StatelessWidget {
   }
 }
 
-class _GoogleLoginButton extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    return RaisedButton.icon(
-      key: const Key('loginForm_googleLogin_raisedButton'),
-      label: const Text(
-        'SIGN IN WITH GOOGLE',
-        style: TextStyle(color: Colors.white),
-      ),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
-      icon: const Icon(FontAwesomeIcons.google, color: Colors.white),
-      color: theme.accentColor,
-      onPressed: () => context.read<LoginCubit>().logInWithGoogle(),
-    );
-  }
-}
-
 class _SignUpButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -178,9 +158,7 @@ class _SignUpButton extends StatelessWidget {
       ),
       onTap: () {
         print("object");
-        Navigator.of(context).push(
-            CupertinoPageRoute(builder: (_) =>  SignUpPage())
-        );
+        Navigator.of(context).push(CupertinoPageRoute(builder: (_) => SignUpPage()));
       },
     );
   }

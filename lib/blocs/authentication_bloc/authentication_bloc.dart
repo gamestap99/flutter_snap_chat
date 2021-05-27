@@ -8,8 +8,7 @@ import 'package:flutter_snap_chat/repositories/user_repository.dart';
 import 'package:meta/meta.dart';
 import 'package:pedantic/pedantic.dart';
 
-class AuthenticationBloc
-    extends Bloc<AuthenticationEvent, AuthenticationState> {
+class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState> {
   AuthenticationBloc({
     @required AuthenticationRepository authenticationRepository,
   })  : assert(authenticationRepository != null),
@@ -43,9 +42,6 @@ class AuthenticationBloc
   AuthenticationState _mapAuthenticationUserChangedToState(
     AuthenticationUserChanged event,
   ) {
-
-    return event.user != UserFirebase.empty
-        ? AuthenticationState.authenticated(event.user)
-        : const AuthenticationState.unauthenticated();
+    return event.user != UserFirebase.empty ? AuthenticationState.authenticated(event.user) : const AuthenticationState.unauthenticated();
   }
 }

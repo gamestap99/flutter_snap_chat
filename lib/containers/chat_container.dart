@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_snap_chat/blocs/authentication_bloc/bloc.dart';
 import 'package:flutter_snap_chat/blocs/chat_bloc/bloc.dart';
-import 'package:flutter_snap_chat/blocs/user_provider_bloc/user_provider_cubit.dart';
 import 'package:flutter_snap_chat/models/user_model.dart';
 import 'package:flutter_snap_chat/repositories/chat_repository.dart';
 import 'package:flutter_snap_chat/repositories/friend_repository.dart';
+import 'package:flutter_snap_chat/screen_display/callscreens/pickup/pickup_layout.dart';
 import 'package:flutter_snap_chat/screen_display/chat.dart';
 
 class ChatContainer extends StatelessWidget {
@@ -17,26 +17,27 @@ class ChatContainer extends StatelessWidget {
   final String peerName;
   final UserModel receiver;
 
-  const ChatContainer({Key key,@required this.receiver ,@required this.perToken, @required this.member, @required this.roomId, @required this.peerId, @required this.peerAvatar,@required this.peerName}) : super(key: key);
+  const ChatContainer({Key key, @required this.receiver, @required this.perToken, @required this.member, @required this.roomId, @required this.peerId, @required this.peerAvatar, @required this.peerName}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     String uid = context.select((AuthenticationBloc bloc) => bloc.state.user.id.toString());
-    print("chat conter uid"+ uid.toString());
+    print("chat conter uid" + uid.toString());
 
-    return BlocProvider(
-      create: (_) =>
-      ChatCubit(repository: ApiChatRepository(), friendRepository: ApiFriendRepository())
-        ..getUser(member, uid),
-      child: Chat(
-        peerId: peerId,
-        peerAvatar: peerAvatar,
-        roomID: roomId,
-        members: member,
-        perToken: perToken,
-        name
-        :peerName, receiver: receiver,
+    return PickupLayout(
+      scaffold: BlocProvider(
+        create: (_) => ChatCubit(repository: ApiChatRepository(), friendRepository: ApiFriendRepository())..getUser(member, uid),
+        child: Chat(
+          peerId: peerId,
+          peerAvatar: peerAvatar,
+          roomID: roomId,
+          members: member,
+          perToken: perToken,
+          name: peerName,
+          receiver: receiver,
+        ),
       ),
+
     );
   }
 }

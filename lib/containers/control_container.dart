@@ -4,7 +4,6 @@ import 'package:flutter_snap_chat/blocs/authentication_bloc/bloc.dart';
 import 'package:flutter_snap_chat/blocs/count_request_friend_bloc/count_request_friend_bloc.dart';
 import 'package:flutter_snap_chat/blocs/update_status_bloc/update_status_cubit.dart';
 import 'package:flutter_snap_chat/blocs/update_status_bloc/update_status_state.dart';
-import 'package:flutter_snap_chat/blocs/user_provider_bloc/user_provider_cubit.dart';
 import 'package:flutter_snap_chat/repositories/friend_repository.dart';
 import 'package:flutter_snap_chat/screen_display/control_screen.dart';
 
@@ -14,14 +13,10 @@ class ControlContainer extends StatefulWidget {
 }
 
 class _ControlContainerState extends State<ControlContainer> {
-
-
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-
-
   }
 
   @override
@@ -40,7 +35,7 @@ class _ControlContainerState extends State<ControlContainer> {
           create: (_) => CountRequestFriendBloc(ApiFriendRepository(), uid),
         ),
         BlocProvider(
-          create: (_)=>UpdateStatusCubit(UpdateStatusState())..updateStatus(uid),
+          create: (_) => UpdateStatusCubit(UpdateStatusState())..updateStatus(uid),
         )
         // BlocProvider.value(
         //   value: context.select((value) => null)<UserProviderCubit>()..getUser(uid),

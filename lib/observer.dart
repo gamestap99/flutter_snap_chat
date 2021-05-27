@@ -1,7 +1,3 @@
-
-
 import 'package:flutter/cupertino.dart';
 
-class Obser with WidgetsBindingObserver{
-
-}
+class Obser with WidgetsBindingObserver {}

@@ -24,5 +24,6 @@ final String CALL_STATUS_RECEIVED = "received";
 final String CALL_STATUS_MISSED = "missed";
 final String noAvatar = "https://firebasestorage.googleapis.com/v0/b/snapchat-ac0cf.appspot.com/o/no_avatar.jpg?alt=media&token=55c6ff85-2ed4-4f74-b067-8e08a15b43bc";
 
-final String noImageAvailable =
-    "https://www.esm.rochester.edu/uploads/NoPhotoAvailable.jpg";
+final String noImageAvailable = "https://www.esm.rochester.edu/uploads/NoPhotoAvailable.jpg";
+
+final String urlContactBot = "http://ndbot9999.herokuapp.com/webhooks/rest/webhook";
